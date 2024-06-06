@@ -1,0 +1,99 @@
+@import "vars.scss";
+main
+{
+    display: flex;
+    flex-direction: row;
+    height: 100%;
+}
+.chats-list
+{
+    flex:2;
+    z-index: 9;
+    box-shadow: 2px 0px 2px -1px #ececec;
+    
+
+}
+.chat
+{
+    flex:6;
+    display: flex;
+    flex-direction: column;
+    
+    .top-bar
+    {
+       
+        background-color: $main-color;
+        padding: 0.25rem;
+        display: flex;
+        align-items: center;
+        p
+        {
+            margin-left: 10px;
+        }
+    }
+    .bottom-bar
+    {
+        background-color: $main-color;
+        padding: 0.3rem;
+        display: flex;
+        padding-bottom: 20px;
+        button
+        {
+            margin: 2px;
+        }
+        .send-btn
+        {
+            svg{ font-size: 1rem;}
+        }
+        
+    }
+    .messages-container
+    {
+        flex:auto;
+        background-color: $gray;
+    }
+}
+.chat-text-input
+{
+    padding: 14px;
+    flex:10;
+    
+}
+.avatar-img
+{
+    background-color: $light-gray;
+    width:2.2rem;
+    height:2.2rem;
+    overflow: hidden;
+    border-radius: $border-radius;
+}
+.my-profile
+{
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    .add-info
+    {
+        padding: 4px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+   
+    
+    border-bottom: 1px solid $light-gray;
+}
+.chat-item
+{
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    &:hover
+    {
+        background-color: $light-gray;
+    }
+    p
+    {
+        margin-left: 10px;
+    }
+}

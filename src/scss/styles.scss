@@ -1,0 +1,57 @@
+@import "vars.scss";
+#root, body, html
+{
+    height: 100%;
+    box-sizing: border-box;
+}
+div
+{
+    box-sizing: border-box;
+
+}
+body
+{
+    margin:0px;
+}
+main
+{
+    box-sizing: border-box;
+}
+
+p
+{
+    margin: 0px;
+}
+@for $i from 1 to 5
+{
+    h#{$i}
+    {
+        margin: 0px;
+    }
+}
+
+input[type='text']
+{
+    background-color: $light-gray;
+    border:0px;
+    border-radius: $border-radius;
+    padding: 0.5rem;
+    outline: none;
+    &:focus,&:active
+    {
+        outline: none;
+        
+    }
+}
+button
+{
+    border-radius: $border-radius;
+    background-color: $light-gray;
+    border:0px;
+    cursor: pointer;
+    &.clear
+    {
+        background-color: transparent;
+
+    }
+}
