@@ -13,11 +13,20 @@ function App() {
       <main>
         <div className='chats-list'>
             <div className="my-profile">
-              <img src="" className='avatar-img'/>
+              <img className='avatar-img'/>
               <div className='add-info'>
-                <h5>John Johnson</h5>
+                <h3>John Johnson</h3>
+                <button className='link'>Change</button>
 
               </div>
+            </div>
+            <div className='chat-item'>
+              <img src="" className='avatar-img'/>
+              <p>Amal</p>
+            </div>
+            <div className='chat-item'>
+              <img src="" className='avatar-img'/>
+              <p>Amal</p>
             </div>
             <div className='chat-item'>
               <img src="" className='avatar-img'/>

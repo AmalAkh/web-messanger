@@ -41,7 +41,7 @@ input[type='text']
     background-color: $light-gray;
     border:0px;
     border-radius: $border-radius;
-    padding: 0.5rem;
+    padding: 0.75rem;
     outline: none;
     &:focus,&:active
     {
@@ -61,5 +61,10 @@ button
     {
         background-color: transparent;
 
+    }
+    &.link
+    {
+        color: $link-blue;
+        background-color: transparent;
     }
 }
