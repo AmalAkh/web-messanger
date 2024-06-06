@@ -1,4 +1,5 @@
 @import "vars.scss";
+@import "fonts.scss";
 #root, body, html
 {
     height: 100%;
@@ -21,14 +22,19 @@ main
 p
 {
     margin: 0px;
+    font-family: "Physis-Medium";
+
 }
-@for $i from 1 to 5
+@for $i from 1 to 6
 {
     h#{$i}
     {
         margin: 0px;
+        font-family: "Physis-Medium";
     }
 }
+
+
 
 input[type='text']
 {
@@ -47,6 +53,8 @@ button
 {
     border-radius: $border-radius;
     background-color: $light-gray;
+    font-family: "Physis-Medium";
+
     border:0px;
     cursor: pointer;
     &.clear
