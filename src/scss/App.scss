@@ -19,6 +19,7 @@ main
     display: flex;
     flex-direction: column;
     
+    
     .top-bar
     {
         
@@ -108,5 +109,9 @@ main
     p
     {
         margin-left: 10px;
+    }
+    &.selected
+    {
+        background-color: $link-blue;
     }
 }
