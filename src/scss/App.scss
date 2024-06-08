@@ -39,6 +39,7 @@ main
         background-color: $main-color;
         padding: 0.3rem;
         display: flex;
+        align-items: center;
         padding-bottom: 20px;
         button
         {
@@ -56,13 +57,7 @@ main
         background-color: $gray;
     }
 }
-.chat-text-input
-{
-    padding: 14px;
-    flex:10;
-    font-size: 1rem;
-    
-}
+
 .avatar-img
 {
     background-color: $light-gray;

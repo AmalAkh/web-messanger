@@ -1,0 +1,16 @@
+.auto-size-text-area
+{
+    height: 2ch;
+   
+    flex:10;    
+    font-size: 0.8rem;
+    resize: none;
+    @for $i from 1 through 6
+    {
+        &.size-#{$i}
+        {
+            height: 2ch *$i;
+        }
+    }
+    
+}

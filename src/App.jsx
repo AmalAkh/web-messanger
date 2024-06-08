@@ -5,6 +5,7 @@ import { faPaperPlane, faPlus } from '@fortawesome/free-solid-svg-icons'
 import "./scss/App.scss";
 import ModalWindow from './components/ModalWindow';
 import Chat from './abstractions/Chat';
+import AutoSizeTextArea from './components/AutoSizeTextArea';
 
 
 function App() {
@@ -36,6 +37,8 @@ function App() {
       setCurrentChat(chats[chatId]);
   }
   
+  
+  
 
   return (
     <>
@@ -66,7 +69,7 @@ function App() {
           </div>
           <div class="bottom-bar">
             <button className='clear attach-btn'><FontAwesomeIcon icon={faPlus} /> </button>
-            <input type="text" placeholder='Message...' className='chat-text-input'/>
+            <AutoSizeTextArea></AutoSizeTextArea>
             <button className='clear send-btn'><FontAwesomeIcon icon={faPaperPlane} /> </button>
           
           </div>
