@@ -1,4 +1,6 @@
 const express = require("express");
+const bcrypt = require("bcrypt");
+
 
 const  { v4 }  = require("uuid");
 const ApiError = require("./../utils/api-error");
@@ -9,6 +11,8 @@ const setupDBConnection = require("./../utils/setup-db-connection");
 
 const router = express.Router();
 const jsonParser = express.json();
+
+
 router.post("/new",jsonParser, async (req, res)=>
 {
     
@@ -27,11 +31,17 @@ router.post("/new",jsonParser, async (req, res)=>
         res.send(new ApiError("invalid_email", "Invalid email", "Invalid email"));
         return ;
     }
-    
+
+    let salt = await bcrypt.genSalt(10);
+
+    let hashed_password = await bcrypt.hash(req.body.password, salt);
+
+    //let hashed_password = 
     try
     {
-        await pool.query("INSERT INTO users VALUES(?, ?, ?, ?, ?)", [req.body.name, req.body.nickname, req.body.email, req.body.password, v4()]);
+        await pool.query("INSERT INTO users VALUES(?, ?, ?, ?, ?, DEFAULT)", [req.body.name, req.body.nickname, req.body.email, hashed_password, v4()]);
         res.sendStatus(200);
+        //res.send(hashed_password);
         
     }catch(err)
     {
