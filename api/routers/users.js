@@ -69,4 +69,19 @@ router.post("/new",jsonParser, async (req, res)=>
 
 }); 
 
+router.post("/:userid", async(req,res)=>
+{
+
+    const pool = setupDBConnection();
+
+    const [rows, fields] = await pool.query("UPDATE users SET confirmed=1 WHERE id=?", [req.params.userid]);
+    if(rows.affectedRows == 0)
+    {
+        res.statusCode = 400;
+        res.send("Error confirming your account");
+
+    }
+    res.send("Your account was confirmed");
+})
+
 module.exports = router;
