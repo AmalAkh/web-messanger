@@ -1,10 +1,13 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
-
-
+const jwt = require("jsonwebtoken");
 const  { v4 }  = require("uuid");
+
+
 const ApiError = require("./../utils/api-error");
 const setupDBConnection = require("./../utils/setup-db-connection");
+const jwtSecretKey = require("./../utils/jwt-secret-key");
+const authorizationMiddleware = require("./../utils/authorization-middleware");
 
 
 
@@ -36,12 +39,12 @@ router.post("/new",jsonParser, async (req, res)=>
 
     let hashed_password = await bcrypt.hash(req.body.password, salt);
 
-    //let hashed_password = 
+    
     try
     {
         await pool.query("INSERT INTO users VALUES(?, ?, ?, ?, ?, DEFAULT)", [req.body.name, req.body.nickname, req.body.email, hashed_password, v4()]);
         res.sendStatus(200);
-        //res.send(hashed_password);
+   
         
     }catch(err)
     {
@@ -69,7 +72,7 @@ router.post("/new",jsonParser, async (req, res)=>
 
 }); 
 
-router.post("/:userid", async(req,res)=>
+router.post("/confirm/:userid", async(req,res)=>
 {
 
     const pool = setupDBConnection();
@@ -82,6 +85,39 @@ router.post("/:userid", async(req,res)=>
 
     }
     res.send("Your account was confirmed");
+})
+
+router.post("/auth", jsonParser,  async (req,res)=>
+{
+
+    const pool = setupDBConnection();
+    const [rows, _] = await pool.query("SELECT password, id,confirmed FROM users  WHERE email = ? OR  nickname = ?", [req.body.login, req.body.login]);
+    if(rows.length == 0)
+    {
+        res.appendHeader("Content-Type", "text/json");
+        res.statusCode = 401;
+        res.send(new ApiError("user_not_exist", "User with this nickname or email does not exist", "User with this nickname or email does not exist"));
+        return;
+    }
+    if(rows[0].confirmed != 1)
+    {
+        res.appendHeader("Content-Type", "text/json");
+        res.statusCode = 401;
+        res.send(new ApiError("user_not_confirmed", "User account is not confirmed", "User account is not confirmed"));
+        return;
+    }
+    
+    if(!(await bcrypt.compare(req.body.password, rows[0].password)))
+    {
+        res.appendHeader("Content-Type", "text/json");
+        res.statusCode = 401;
+        res.send(new ApiError("incorrect_password", "Incorrect password", "Incorrect password"));
+        return;
+    }
+        
+    res.statusCode = 200;
+    res.appendHeader("Content-Type", "text/plain");
+    res.send(await jwt.sign({userId:rows[0].id}, jwtSecretKey, {expiresIn:"24h"}));
 })
 
 module.exports = router;
