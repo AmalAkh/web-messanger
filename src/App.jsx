@@ -12,6 +12,7 @@ function App() {
   
   const [currentChat, setCurrentChat] = useState(0);
   const [chats, setChats] = useState({});
+  const [text, setText] = useState("");
 
   const [isVisible, setIsVisible] = useState(false);
 
@@ -65,7 +66,7 @@ function App() {
             </div>
           </div>
           <div className="messages-container">
-
+            {text}
           </div>
           <div class="bottom-bar">
             <button className='clear attach-btn'><FontAwesomeIcon icon={faPlus} /> </button>
@@ -75,7 +76,10 @@ function App() {
           </div>
 
         </div>
-        <ModalWindow title="Test" isVisible={isVisible} onClose={()=>setIsVisible(false)} ></ModalWindow>
+        <ModalWindow title="Test" isVisible={isVisible} onClose={()=>setIsVisible(false)} >
+
+          <div><button onClick={()=>setText(text+"a")}>test</button></div>
+        </ModalWindow>
       </main>
     </>
   )

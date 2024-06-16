@@ -6,19 +6,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 export default function ModalWindow({title,children, isVisible=false, onClose=()=>{} })
 {
     const modalBack = useRef(null);
+    const wasVisible = useRef(false);
    
     useEffect(()=>
     {
-        if(isVisible)
+        if(isVisible && !wasVisible.value)
         {
             modalBack.current.classList.remove("hide-anim");
             modalBack.current.classList.remove("hidden");
             modalBack.current.classList.add("show-anim");
-        
-        }else
+            wasVisible.value = isVisible;
+        }else if(!isVisible && wasVisible.value)
         {
             
             modalBack.current.classList.add("hide-anim");
+            wasVisible.value = isVisible;
 
         }
     })
