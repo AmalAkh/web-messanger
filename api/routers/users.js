@@ -20,7 +20,8 @@ router.post("/new",jsonParser, async (req, res)=>
 {
     
     const pool = setupDBConnection();
-    if(req.body.nickname.length > 16)
+    
+    if(req.body.nickname && req.body.nickname.length > 16)
     {
         res.appendHeader("Content-Type", "text/json");
         res.statusCode = 400;
@@ -119,5 +120,19 @@ router.post("/auth", jsonParser,  async (req,res)=>
     res.appendHeader("Content-Type", "text/plain");
     res.send(await jwt.sign({userId:rows[0].id}, jwtSecretKey, {expiresIn:"24h"}));
 })
+router.delete("/remove",authorizationMiddleware, async (req, res)=>
+{
+    const pool = setupDBConnection();
+    const [rows, fields] = await pool.query("DELETE FROM users WHERE id=?", [res.locals.userId]);
+    if(rows.affectedRows == 0)
+    {
 
+        res.appendHeader("Content-Type", "text/json");
+        res.statusCode = 404;
+        res.send(new ApiError("user_not_found", "Account was not found ", "Account was not found"));
+        return;
+    }
+    
+    return;
+});
 module.exports = router;
