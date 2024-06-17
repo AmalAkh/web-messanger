@@ -5,44 +5,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function ModalWindow({title,children, isVisible=false, onClose=()=>{} })
 {
-    const modalBack = useRef(null);
-    const wasVisible = useRef(false);
-   
+    const isFirst = useRef(true);
+
     useEffect(()=>
     {
-        if(isVisible && !wasVisible.value)
-        {
-            modalBack.current.classList.remove("hide-anim");
-            modalBack.current.classList.remove("hidden");
-            modalBack.current.classList.add("show-anim");
-            wasVisible.value = isVisible;
-        }else if(!isVisible && wasVisible.value)
-        {
-            
-            modalBack.current.classList.add("hide-anim");
-            wasVisible.value = isVisible;
-
-        }
-    })
-    
-   
-    function finishAnimation()
-    {
-        
-        if(!isVisible)
-        {
-            
-            modalBack.current.classList.remove("hide-anim");
-            modalBack.current.classList.add("hidden");
-            
-        }else
-        {
-            modalBack.current.classList.remove("show-anim");
-
-        }
-    }
+        isFirst.current = false;
+    },[])
     return <>
-        <div ref={modalBack} className={`modal-window-background hidden`} onAnimationEnd={finishAnimation}>
+        <div className={`modal-window-background ${isVisible && !isFirst.current ? 'show' :'hidden'}`}>
             <div className="modal-window">
                 <div className="modal-window-header">
                     <h4>{title}</h4>

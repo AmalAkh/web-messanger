@@ -5,29 +5,35 @@
     position: absolute;
     width: 100%;
     height: 100%;z-index: 100;
-    display: flex;
+    display: none;
     align-items: center;
+    
     justify-content: center;
     &.hidden
     {
+        animation: hide-background 1s;
+        animation-fill-mode: forwards;
+       
+        .modal-window
+        {
+            animation:hide-window 1s;
+        }
+    }
+    &.hidden-without-anim
+    {
         display: none;
     }
-    &.show-anim
+    &.show
     {
+        display: flex;
         animation: show-background 1s;
         .modal-window
         {
-            animation: show-window 1s;
+            animation:show-window 1s;
         }
+        
     }
-    &.hide-anim
-    {
-        animation: hide-background 1s;
-        .modal-window
-        {
-            animation: hide-window 1s;
-        }
-    }
+   
     
     
     .modal-window
@@ -84,12 +90,14 @@
 {
     from
     {
+        display: flex;
         opacity: 1;
         
     }
     to
     {
         opacity: 0;
+        display: none;
         
 
     }
