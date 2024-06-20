@@ -4,8 +4,9 @@ import { faPaperPlane, faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import "./scss/App.scss";
 import ModalWindow from './components/ModalWindow';
-import Chat from './abstractions/Chat';
+import Chat from './abstractions/chat';
 import AutoSizeTextArea from './components/AutoSizeTextArea';
+import ChatView from './components/ChatView';
 
 
 function App() {
@@ -58,24 +59,7 @@ function App() {
             
             
         </div>
-        <div className='chat'>
-          <div className='top-bar'>
-            <img src="" className='avatar-img'/>
-            <div>
-              <p>{currentChat.userName}</p>
-            </div>
-          </div>
-          <div className="messages-container">
-            {text}
-          </div>
-          <div class="bottom-bar">
-            <button className='clear attach-btn'><FontAwesomeIcon icon={faPlus} /> </button>
-            <AutoSizeTextArea></AutoSizeTextArea>
-            <button className='clear send-btn'><FontAwesomeIcon icon={faPaperPlane} /> </button>
-          
-          </div>
-
-        </div>
+        <ChatView></ChatView>
         <ModalWindow title="Test" isVisible={isVisible} onClose={()=>setIsVisible(false)} >
 
           <div><button onClick={()=>setText(text+"a")}>test</button></div>

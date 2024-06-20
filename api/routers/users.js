@@ -9,7 +9,7 @@ const setupDBConnection = require("./../utils/setup-db-connection");
 const jwtSecretKey = require("./../utils/jwt-secret-key");
 const authorizationMiddleware = require("./../utils/authorization-middleware");
 
-
+//to do : implement check for existance of user for authorizartion middleware
 
 
 const router = express.Router();

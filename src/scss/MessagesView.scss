@@ -1,0 +1,106 @@
+@import "vars";
+
+.messages-view
+{
+    
+
+    overflow-y: scroll;
+    scroll-behavior: smooth;
+    max-height: 100%;
+    background-color: $gray;
+    flex: auto;
+    display: flex;
+    
+    flex-direction: column;
+
+    scrollbar-width: 0px;
+   
+    &::-webkit-scrollbar
+    {
+        display: none;
+    }
+}
+.date-label
+{
+    position: sticky;
+    top:10px;
+    margin: auto;
+    width: 15%;
+    text-align: center;
+    background: $main-color;
+    border-radius: $border-radius;
+    p
+    {
+        font-size: 0.75rem;
+    }
+}
+.message-container
+{   
+    
+    padding: 0.45rem;
+    flex-basis: auto;
+    overflow: auto;
+    
+    
+    
+
+
+    .message
+    {
+        padding: 0.5rem;
+        max-width: 60%;
+        display: inline-block;
+        border-radius: $border-radius;
+        background-color: $link-blue;
+        p
+        {
+            color:$main-color;
+            font-family: "Physis-Light";
+            &.time
+            {
+                text-align: right;
+            }
+        }
+
+       
+        &.local-message
+        {
+            background-color: $main-color;
+            
+            float: right;
+            p
+            {
+                color:black;
+                &.time
+                {
+                    text-align: left;
+                }
+            }
+        }
+    }
+}
+.grouped-messages-container:first-child
+{
+    margin-top: auto;
+}
+.date
+{
+    margin: 10px;
+    text-align: center;
+    font-size: 0.75rem;
+    &:first-child
+    {
+        margin-top: auto;
+    }
+}
+.time
+{
+   
+   
+    font-size: 0.75rem;
+    font-family: "Physis-Light";
+    color:dark-gray;
+
+    
+
+}
