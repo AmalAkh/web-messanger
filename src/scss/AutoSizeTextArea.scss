@@ -1,16 +1,19 @@
 .auto-size-text-area
 {
-    height: 2ch;
-   
+    
+    box-sizing: border-box;
     flex:10;    
+    
     font-size: 0.8rem;
-    resize: none;
+    resize:none;
+    height: 4ch;
     @for $i from 1 through 6
     {
         &.size-#{$i}
         {
-            height: 2ch *$i;
-        }
+            height: 3.25ch + 2*$i;
+        }   
     }
+   
     
 }

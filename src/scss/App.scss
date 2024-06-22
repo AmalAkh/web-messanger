@@ -1,6 +1,7 @@
 @import "vars.scss";
 main
 {
+    background-color: $main-color;
     display: flex;
     flex-direction: row;
     height: 100%;
@@ -10,6 +11,8 @@ main
     flex:2;
     z-index: 9;
     box-shadow: 2px 0px 2px -1px #ececec;
+
+    background-color: $main-color;
     
 
 }
@@ -88,6 +91,7 @@ main
 }
 .chat-item
 {
+
     display: flex;
     align-items: center;
     padding: 10px;
