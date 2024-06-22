@@ -36,13 +36,14 @@ p
 
 
 
-input[type='text'], textarea
+input[type='text'], input[type='password'], textarea
 {
     background-color: $light-gray;
     border:0px;
     border-radius: $border-radius;
     padding: 0.75rem;
     outline: none;
+    box-sizing: border-box;
     &:focus,&:active
     {
         outline: none;
@@ -55,6 +56,8 @@ button
     border-radius: $border-radius;
     background-color: $light-gray;
     font-family: "Physis-Medium";
+    box-sizing: border-box;
+    padding: 0.7rem;
 
     border:0px;
     cursor: pointer;

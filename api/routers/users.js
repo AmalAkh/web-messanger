@@ -114,7 +114,7 @@ router.post("/auth", jsonParser,  async (req,res)=>
         res.statusCode = 401;
         res.send(new ApiError("incorrect_password", "Incorrect password", "Incorrect password"));
         return;
-    }
+    } 
         
     res.statusCode = 200;
     res.appendHeader("Content-Type", "text/plain");
@@ -135,4 +135,5 @@ router.delete("/remove",authorizationMiddleware, async (req, res)=>
     
     return;
 });
+
 module.exports = router;

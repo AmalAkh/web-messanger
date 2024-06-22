@@ -1,0 +1,97 @@
+@import "vars";
+main
+{
+    background-color: $light-gray;
+}
+.container
+{
+    width:26%;
+    margin: auto;
+    background-color: $main-color;
+    border-radius: $border-radius;
+ 
+    padding: 10px;
+    &.show
+    {
+        
+        display: block;
+    }
+    &.hidden
+    {
+        display: none;
+    }
+    input
+    {
+        width:100%;
+        margin-top: 20px;
+        
+
+    }
+    button
+    {
+        
+        display: inline-block;
+        width:48%;
+        margin: 2px;
+        margin-top:20px;
+    }
+}
+/*.register-container
+{
+    display: none;
+}
+*/
+.code-container
+{
+    display: none;
+}
+#login-button
+{
+    background-color: $link-blue;
+    color:white;
+}
+.error-msg
+{
+    padding: 6px;
+    box-sizing: border-box;
+    border: 2px solid $red;
+    border-radius: $border-radius;
+    margin-top: 14px;
+
+}
+
+@keyframes show-anim
+{
+    from
+    {
+        display: block;
+       
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to
+    {
+        transform: translateY(0px);
+        opacity: 1;
+        
+
+    }
+}
+@keyframes hide-anim
+{
+    from
+    {
+        transform: translateY(0px);
+        opacity: 1;
+       
+
+        
+    }
+    to
+    {
+        transform: translateY(-50px);
+        opacity: 0;
+        display: none;
+       
+    }
+}
