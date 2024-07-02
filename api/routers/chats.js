@@ -44,16 +44,32 @@ router.post("/new",authorizationMiddleware, jsonParser, async(req,res)=>
     res.send(chatId);
 })
 router.get("/",authorizationMiddleware, async(req,res)=>
-    {
+{
         const pool = setupDBConnection();
         console.log(res.locals.userId);
         const [rows, _] = await pool.query("SELECT id, IF(user1id = ?, user2id, user1id) AS userid FROM chats  WHERE (user1id = ? OR user2id = ?)",[res.locals.userId, res.locals.userId,res.locals.userId]);
         
         res.send(rows);
         
-    });
+});
 
+router.delete("/:id",authorizationMiddleware, async (req, res)=>
+{
+    const pool = setupDBConnection();
 
+    const result = await  pool.query("DELETE FROM chats WHERE id=?", [req.params.id]);
+    if(result[0].affectedRows == 0)
+    {
+        res.statusCode = 400;
+        res.append("Content-Type", "application/json");
+        res.send(new ApiError("chat_not_exist", "Chat does not exist", "Chat does not exist"));
+        return;
+    }
+
+    res.send(req.params.id);
+
+    
+})
 
 
 module.exports = router;
