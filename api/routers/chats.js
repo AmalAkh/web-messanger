@@ -18,17 +18,17 @@ router.post("/new",authorizationMiddleware, jsonParser, async(req,res)=>
     const chatId = v4();
 
 
-    const userExistRequestResult = await  pool.query("SELECT EXISTS(SELECT id FROM users WHERE nickname = ?) AS exts", [req.body.userId]);
-    if(userExistRequestResult[0][0].exts == 0)
+    const userExistRequestResult = await  pool.query("SELECT id FROM users WHERE nickname = ?", [req.body.nickname]);
+    if(userExistRequestResult[0].length == 0)
     {
         res.statusCode = 400;
         res.append("Content-Type", "application/json");
         res.send(new ApiError("user_not_exist", "User with such nickname does not exist",  "User with such nickname does not exist"));
         return;
     }
-
-    const chatExistRequestResult = await  pool.query("SELECT EXISTS(SELECT id FROM chats WHERE (user1id = ? AND user2id = ?) OR (user1id = ? AND user2id = ?)) AS exts", [res.locals.userId, req.body.userId,req.body.userId,res.locals.userId]);
-    if(chatExistRequestResult[0][0].exts == 0)
+    let secondUserId = userExistRequestResult[0][0].id;
+    const chatExistRequestResult = await  pool.query("SELECT EXISTS(SELECT id FROM chats WHERE (user1id = ? AND user2id = ?) OR (user1id = ? AND user2id = ?)) AS exts", [res.locals.userId, secondUserId,secondUserId,res.locals.userId]);
+    if(chatExistRequestResult[0][0].exts == 1)
     {
         res.statusCode = 400;
         res.append("Content-Type", "application/json");
@@ -37,12 +37,23 @@ router.post("/new",authorizationMiddleware, jsonParser, async(req,res)=>
     }
 
 
-    await  pool.query("INSERT INTO chats VALUES(?, ?, ?)", [chatId, res.locals.userId, req.body.userId]);
+    await  pool.query("INSERT INTO chats VALUES(?, ?, ?)", [chatId, res.locals.userId, secondUserId]);
 
 
     res.append("Content-Type", "text/plain");
     res.send(chatId);
 })
+router.get("/",authorizationMiddleware, async(req,res)=>
+    {
+        const pool = setupDBConnection();
+        console.log(res.locals.userId);
+        const [rows, _] = await pool.query("SELECT id, IF(user1id = ?, user2id, user1id) AS userid FROM chats  WHERE (user1id = ? OR user2id = ?)",[res.locals.userId, res.locals.userId,res.locals.userId]);
+        
+        res.send(rows);
+        
+    });
+
+
 
 
 module.exports = router;
