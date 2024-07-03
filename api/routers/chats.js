@@ -47,7 +47,7 @@ router.get("/",authorizationMiddleware, async(req,res)=>
 {
         const pool = setupDBConnection();
         console.log(res.locals.userId);
-        const [rows, _] = await pool.query("SELECT  id, IF(user1id = ?, user2id, user1id) AS userid, (SELECT name FROM users WHERE id = userid) as name FROM chats  WHERE (user1id = ? OR user2id = ?)",[res.locals.userId, res.locals.userId,res.locals.userId]);
+        const [rows, _] = await pool.query("SELECT  id, IF(user1id = ?, user2id, user1id) AS userid, (SELECT name FROM users WHERE id = userId) as userName FROM chats  WHERE (user1id = ? OR user2id = ?)",[res.locals.userId, res.locals.userId,res.locals.userId]);
         
         res.send(rows);
         

@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
+import { useNavigate } from "react-router-dom";
+
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPaperPlane, faPlus } from '@fortawesome/free-solid-svg-icons'
+import axios from 'axios';
 
 import "./scss/App.scss";
 import ModalWindow from './components/ModalWindow';
@@ -11,32 +14,30 @@ import ChatView from './components/ChatView';
 
 function App() {
   
-  const [currentChat, setCurrentChat] = useState(0);
-  const [chats, setChats] = useState({});
+  const [currentChat, setCurrentChat] = useState("");
+  const [chats, setChats] = useState([]);
   const [text, setText] = useState("");
 
   const [isVisible, setIsVisible] = useState(false);
 
+  const navigate = useNavigate();
+
+
   useEffect(()=>
   {
-    if(Object.keys(chats).length == 0)
-    {
-      setChats({"1":new Chat("Test user", "", 1,1,[]), 2:new Chat("Test user 2", "", 2,2,[])})
-    }
-  });
-  let chatsList = new Array(chats.length);
-  Object.keys(chats).forEach((chatId,i)=>
-  {
+    axios.get("http://localhost:8000/chats/",{headers:{'Authorization':localStorage.getItem("jwt")}}).then((res)=>
+      {
+        setChats(res.data);
+      }).catch((err)=>
+        {
+          navigate("/login");
+        })
+      
+  }, []);
   
-    let chat = chats[chatId];
-    chatsList[i] = <div className={`chat-item ${currentChat.id == chat.id ? 'selected':''}`} onClick={()=>{selectedChat(chatId)}} key={chatId}>
-          <img src={`${chat.avatar}`} className='avatar-img'/>
-          <p>{chat.userName}</p>
-    </div>
-  })
   function selectedChat(chatId)
   {
-      setCurrentChat(chats[chatId]);
+      setCurrentChat(chatId);
   }
   
   
@@ -54,8 +55,14 @@ function App() {
 
               </div>
             </div>
-            {chatsList}
+            {chats.map((chat)=>
+              {
+                return (<div className={`chat-item ${currentChat == chat.id ? 'selected':''}`} onClick={()=>{selectedChat(chat.id)}} key={chat.id}>
+                <img src={`${chat.avatar}`} className='avatar-img'/>
+                <p>{chat.userName}</p>
+            </div>)
             
+              })}
             
             
         </div>

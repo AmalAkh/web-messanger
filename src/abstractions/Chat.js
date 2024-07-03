@@ -7,6 +7,6 @@ export default class Chat
         this.avatar = avatar;
         this.id = id;
         this.userId = userId;
-        this.messages = messages;
+        
     }
 }

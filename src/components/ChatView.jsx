@@ -28,6 +28,12 @@ export default function ChatView({userName,userAvatar,chatId})
     {
       newMessages.push(new Message("Message tester", "2024-06-08 12:01",Math.random().toString()));
     }
+    newMessages.push(new Message("Message tester last", "2024-06-21 14:21","1234gggg1"));
+
+    newMessages.push(new Message("Message tester last", "2024-06-22 14:21","1234gggg2"));
+
+    newMessages.push(new Message("Message tester last", "2024-06-23 14:21","1234gggg3"));
+
     setMessages([...newMessages]);
 
   },[]);

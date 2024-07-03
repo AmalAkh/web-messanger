@@ -15,12 +15,11 @@ export default function MessageView({messages=[]})
 
     useEffect(()=>
     {
-        messageView.current.scroll(0, messageView.current.scrollHeight);
+        messageView.current.scroll({left:0, top:messageView.current.scrollHeight+100, behavior:"instant"});
     }, [messages])
     function onMessagesScroll()
     {
-        //console.log(document.querySelectorAll(".grouped-messages-container p.date")[0].offsetTop);
-        //console.log(messageView.current.scrollTop);
+       
         for(let el of document.querySelectorAll(".grouped-messages-container p.date"))
             {
 
