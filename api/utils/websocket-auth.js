@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const jwtSecretKey = require("./jwt-secret-key");
 /**  Authantification for websocket 
- * return {String} user id
+ * @return {String} user id
 */
 async function websocketAuth(jsonwebtoken)
 {

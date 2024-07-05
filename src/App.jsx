@@ -29,15 +29,19 @@ function App() {
       {
         setChats(res.data);
       }).catch((err)=>
-        {
+      {
           navigate("/login");
-        })
+      })
+    
       
+    
   }, []);
   
-  function selectedChat(chatId)
+  function selectChat(chatId)
   {
-      setCurrentChat(chatId);
+   
+    setCurrentChat(chatId);
+    
   }
   
   
@@ -57,7 +61,7 @@ function App() {
             </div>
             {chats.map((chat)=>
               {
-                return (<div className={`chat-item ${currentChat == chat.id ? 'selected':''}`} onClick={()=>{selectedChat(chat.id)}} key={chat.id}>
+                return (<div className={`chat-item ${currentChat == chat.id ? 'selected':''}`} onClick={()=>{selectChat(chat.id)}} key={chat.id}>
                 <img src={`${chat.avatar}`} className='avatar-img'/>
                 <p>{chat.userName}</p>
             </div>)
@@ -66,7 +70,7 @@ function App() {
             
             
         </div>
-        <ChatView></ChatView>
+        <ChatView chatId={currentChat}></ChatView>
         <ModalWindow title="Test" isVisible={isVisible} onClose={()=>setIsVisible(false)} >
 
           <div><button onClick={()=>setText(text+"a")}>test</button></div>

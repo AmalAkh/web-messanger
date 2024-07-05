@@ -3,5 +3,9 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 
 export default function toDateString(date)
 {
+    if(typeof date == "string")
+    {
+        date = new Date(date);
+    }
     return `${date.getDate()} ${months[date.getMonth()]}`
 }

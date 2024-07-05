@@ -3,6 +3,11 @@ import "../scss/MessagesView.scss";
 import groupByDate from "../utils/group-by-date";
 import Message from "./ChatMessage";
 
+/** @description Component for displaying messages in ChatView component 
+ * 
+ * 
+ * 
+*/
 
 
 export default function MessageView({messages=[]})
@@ -16,7 +21,10 @@ export default function MessageView({messages=[]})
     useEffect(()=>
     {
         messageView.current.scroll({left:0, top:messageView.current.scrollHeight+100, behavior:"instant"});
+        
     }, [messages])
+
+
     function onMessagesScroll()
     {
        

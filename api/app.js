@@ -41,7 +41,7 @@ let server = app.listen(8000);
 
 server.on("upgrade",async (req, socket, head)=>
     {
-
+        
         let userId;
         try
         {
@@ -54,6 +54,7 @@ server.on("upgrade",async (req, socket, head)=>
             return;
             
         }
+
  
         wsServer.handleUpgrade(req, socket, head, (ws)=>
         {

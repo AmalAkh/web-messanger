@@ -75,7 +75,7 @@ router.get("/:id/messages/:offset", authorizationMiddleware, async(req,res)=>
 {
     const pool = setupDBConnection();
     
-    const [rows, _] = await pool.query("SELECT text, date, id, (userid = ?) as isLocal FROM messages WHERE chatid = ? ORDER BY DATE DESC LIMIT 10 OFFSET ?", [res.locals.userId, req.params.id, Number(req.params.offset)]);
+    const [rows, _] = await pool.query("SELECT text, date, id, (userid = ?) as isLocal FROM messages WHERE chatid = ? ORDER BY DATE ASC LIMIT 100 OFFSET ?", [res.locals.userId, req.params.id, Number(req.params.offset)]);
 
     
     res.send(rows.map((message)=>
