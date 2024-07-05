@@ -11,6 +11,10 @@ async function websocketAuth(jsonwebtoken)
     }
    
     const data = await jwt.verify(jsonwebtoken, jwtSecretKey);
+    if(data.type != "websocket")
+    {
+        throw new Error();
+    }
     return data.userId;
             
     

@@ -12,9 +12,10 @@ const jwtSecretKey = require("../utils/jwt-secret-key");
 const router = express.Router();
 
 
-router.get("/ticket", authorizationMiddleware, (req,res)=>
+router.get("/ticket", authorizationMiddleware, async (req,res)=>
 {
-    const ticketToken = jwt.sign({userId:res.locals.userId}, jwtSecretKey, {expiresIn:30});
-    return ticketToken;
+    res.send(await jwt.sign({userId:res.locals.userId, type:"websocket"}, jwtSecretKey, {expiresIn:30}));
+    
     
 })
+module.exports = router;

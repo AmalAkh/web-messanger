@@ -3,6 +3,7 @@ const cors = require("cors");
 
 const users = require("./routers/users");
 const chats = require("./routers/chats");
+const websocket = require("./routers/websocket");
 const wsServer = require("./ws/ws-server");
 const websocketAuth = require("./utils/websocket-auth");
 
@@ -34,6 +35,8 @@ app.get("/", (req, res)=>
 });
 app.use("/users", cors(corsOptions) , users);
 app.use("/chats", cors(corsOptions) , chats);
+app.use("/websocket", cors(corsOptions) , websocket);
+
 
 
 
