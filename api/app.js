@@ -6,6 +6,8 @@ const chats = require("./routers/chats");
 const wsServer = require("./ws/ws-server");
 const websocketAuth = require("./utils/websocket-auth");
 
+const querystring = require('node:querystring'); 
+
 
 
  
@@ -45,11 +47,11 @@ server.on("upgrade",async (req, socket, head)=>
         let userId;
         try
         {
-            userId = await websocketAuth(req.headers["authorization"]);
+            userId = await websocketAuth( querystring.decode(req.url.split("?")[1])["ticket"]);
         }catch(err)
         {
             socket.write("HTTP/1.1 401 Unauthorized\r\n\r\n");
-        
+            
             socket.destroy();
             return;
             
