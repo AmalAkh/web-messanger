@@ -5,7 +5,7 @@ const ws = require("ws");
 
 const setupDBConnection = require("../utils/setup-db-connection");
 const  { v4 }  = require("uuid");
-/**/
+
 const wss = new ws.WebSocketServer({port:8080});
 
 
@@ -68,6 +68,10 @@ async function createNewMessage(messangerRequest, senderId)
     sendMessageToAll(senderId, {...responseMessage, isLocal:true});
 
 }
+/** Sends message through websocket to all connected sockets associated with user id 
+ * @param {String} userId user id
+ * @param {Object} message request message
+*/
 function sendMessageToAll(userId, message)
 {
     if(connections[userId]) 
