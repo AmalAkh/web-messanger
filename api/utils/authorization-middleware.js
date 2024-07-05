@@ -1,9 +1,9 @@
 const ApiError = require("./api-error");
 const jwt = require("jsonwebtoken");
-const jwtSecretKey = require("./../utils/jwt-secret-key");
+const jwtSecretKey = require("./../utils/jwt-secret-key"); 
 
 async function authorizationMiddleware(req,res,next)
-{
+{ 
     if(!req.headers["authorization"])
     {
         res.appendHeader("Content-Type", "text/json");
