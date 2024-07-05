@@ -30,7 +30,7 @@ let corsOptions =
 
 app.get("/", (req, res)=>
 {
-    res.send("test");
+    res.send("test"); 
 });
 app.use("/users", cors(corsOptions) , users);
 app.use("/chats", cors(corsOptions) , chats);

@@ -20,7 +20,11 @@ export default function MessageView({messages=[]})
 
     useEffect(()=>
     {
-        messageView.current.scroll({left:0, top:messageView.current.scrollHeight+100, behavior:"instant"});
+        
+        setTimeout(()=>
+        {
+            messageView.current.scroll({left:0, top:messageView.current.scrollHeight, behavior:"instant"});
+        },10);
         
     }, [messages])
 
