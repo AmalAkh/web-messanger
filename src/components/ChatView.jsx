@@ -7,21 +7,66 @@ import axios from 'axios';
 import Chat from './../abstractions/chat';
 import AutoSizeTextArea from './AutoSizeTextArea';
 import MessageView from './MessagesView';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import ChatMessage from './ChatMessage';
 import Message from '../abstractions/message';
+import WebSocketMessage from '../abstractions/websocket-message';
 
 
 
 
-export default function ChatView({userName,userAvatar,chatId=""})
+export default function ChatView({userName,userAvatar,userId,chatId="", ws=null})
 {
 
+  const chatIdRef = useRef(chatId);
+  chatIdRef.current = chatId;
+  const [messages, _setMessages] = useState([]);
+  const messagesRef = useRef([]);
 
-    const [messages, setMessages] = useState([]);
-    const [message, setMessage] = useState("");
+  const eventListenerSet  = useRef(false);
 
-    const navigate = useNavigate();
+  let setMessages = (data)=>
+  {
+    _setMessages(data);
+    messagesRef.current = data;
+  };
+  const [messageText, setMessageText] = useState("");
+
+  const navigate = useNavigate();
+
+  
+
+  useEffect(()=>
+  {
+    if(ws && !eventListenerSet.current)
+    {
+      console.log("test");
+      
+        
+      ws.addEventListener("message", (webSocketMessage)=>
+      {
+        webSocketMessage = JSON.parse(webSocketMessage.data);
+        if(webSocketMessage.type == "new_msg")
+        {
+          //console.log(webSocketMessage);
+          addNewMessage(webSocketMessage.data);
+        }
+      })
+      eventListenerSet.current = true;
+    }
+  }, [ws]);
+  
+  function addNewMessage(newMessage)
+  {
+    
+    if(chatIdRef.current == newMessage.chatId)
+    {
+   
+      setMessages([...messagesRef.current, {...newMessage,date:new Date(newMessage.date) }])
+    }
+    
+  
+  }
 
   useEffect(()=>
   {
@@ -61,10 +106,12 @@ export default function ChatView({userName,userAvatar,chatId=""})
   
   function sendMessage()
   {
-    if (message.trim() != "")
+    if (messageText.trim() != "")
     {
-      setMessages([...messages, new Message(message.trim(), Date.now())]);
-      setMessage("");
+     
+      let websocketMessage = new WebSocketMessage("new_msg", new Message(messageText.trim(), Date.now(), chatId, userId));
+      ws.send(JSON.stringify(websocketMessage));
+      setMessageText("");
     }
   }
 
@@ -79,7 +126,7 @@ export default function ChatView({userName,userAvatar,chatId=""})
           <MessageView messages={messages}></MessageView>
           <div className="bottom-bar">
             {/*<button className='clear attach-btn'><FontAwesomeIcon icon={faPlus} /> </button>*/}
-            <AutoSizeTextArea placeholder='Message' value={message} onInput={(e)=>setMessage(e.target.value)}></AutoSizeTextArea>
+            <AutoSizeTextArea placeholder='Message' value={messageText} onInput={(e)=>setMessageText(e.target.value)}></AutoSizeTextArea>
             <button className='clear send-btn' onClick={sendMessage}><FontAwesomeIcon icon={faPaperPlane} /> </button>
           
           </div>

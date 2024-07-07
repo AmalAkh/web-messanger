@@ -24,10 +24,13 @@ wss.on("connection", (ws, req, userId)=>
     } 
     ws.on("close", ()=>
     {
-        connections[userId].splice(connections[userId].indexOf(ws),0);
-        if(connections[userId].length = [])
+        if(connections[userId] != undefined)
         {
-            delete connections[userId];
+            connections[userId].splice(connections[userId].indexOf(ws),0);
+            if(connections[userId].length = [])
+            {
+                delete connections[userId];
+            }
         }
     });
     ws.on("message", async (data)=>
@@ -59,13 +62,13 @@ async function createNewMessage(messangerRequest, senderId)
   
     let messageId  = v4();
     const date = new Date();
-    let messageDate = `${date.getUTCFullYear()}.${date.getUTCMonth()+1}.${date.getUTCDay()} ${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`; 
-    await pool.query("INSERT INTO messages VALUES(?, ?, ?, ?, ?, DEFAULT )", [messangerRequest.data.message,messageDate, messangerRequest.data.chatId, messangerRequest.data.userId, messageId ])
+    let messageDate = `${date.getUTCFullYear()}.${date.getUTCMonth()+1}.${date.getUTCDate()} ${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`; 
+    await pool.query("INSERT INTO messages VALUES(?, ?, ?, ?, ?, DEFAULT )", [messangerRequest.data.text,messageDate, messangerRequest.data.chatId, senderId, messageId ])
     
 
-    let responseMessage = {type:"new_msg", data:{text:messangerRequest.data.message, date:messageDate,files:[], id:messageId}}
-    sendMessageToAll(messangerRequest.data.userId, {...responseMessage, isLocal:false});
-    sendMessageToAll(senderId, {...responseMessage, isLocal:true});
+    let responseMessage = {type:"new_msg", data:{text:messangerRequest.data.text, date:messageDate,files:[], chatId:messangerRequest.data.chatId, id:messageId}}
+    sendMessageToAll(messangerRequest.data.userId, {...responseMessage, data:{...responseMessage.data,isLocal:false}});
+    sendMessageToAll(senderId,{...responseMessage, data:{...responseMessage.data,isLocal:true}});
 
 }
 /** Sends message through websocket to all connected sockets associated with user id 

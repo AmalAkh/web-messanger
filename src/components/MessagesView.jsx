@@ -53,7 +53,7 @@ export default function MessageView({messages=[]})
             <p className="date">{date}</p>
             { groupedMessages[date].map((message)=>
             {
-                return <Message key={message.id} text={message.text} date={message.date}></Message>
+                return <Message key={message.id} text={message.text} date={message.date} isLocal={message.isLocal}></Message>
             })}
         </div>
     })}

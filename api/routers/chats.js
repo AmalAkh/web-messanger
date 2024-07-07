@@ -47,7 +47,7 @@ router.get("/",authorizationMiddleware, async(req,res)=>
 {
         const pool = setupDBConnection();
         console.log(res.locals.userId);
-        const [rows, _] = await pool.query("SELECT  id, IF(user1id = ?, user2id, user1id) AS userid, (SELECT name FROM users WHERE id = userId) as userName FROM chats  WHERE (user1id = ? OR user2id = ?)",[res.locals.userId, res.locals.userId,res.locals.userId]);
+        const [rows, _] = await pool.query("SELECT  id, IF(user1id = ?, user2id, user1id) AS userId, (SELECT name FROM users WHERE id = userId) as userName FROM chats  WHERE (user1id = ? OR user2id = ?)",[res.locals.userId, res.locals.userId,res.locals.userId]);
         
         res.send(rows);
         
@@ -75,10 +75,10 @@ router.get("/:id/messages/:offset", authorizationMiddleware, async(req,res)=>
 {
     const pool = setupDBConnection();
     
-    const [rows, _] = await pool.query("SELECT text, date, id, (userid = ?) as isLocal FROM messages WHERE chatid = ? ORDER BY DATE ASC LIMIT 100 OFFSET ?", [res.locals.userId, req.params.id, Number(req.params.offset)]);
+    const [rows, _] = await pool.query("SELECT text, date, id, (userid = ?) as isLocal FROM messages WHERE chatid = ? ORDER BY DATE DESC LIMIT 100 OFFSET ?", [res.locals.userId, req.params.id, Number(req.params.offset)]);
 
     
-    res.send(rows.map((message)=>
+    res.send(rows.reverse().map((message)=>
     {
         return {...message, isLocal:message.isLocal == 1};
     }));

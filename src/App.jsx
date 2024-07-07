@@ -19,6 +19,9 @@ function App() {
   const [text, setText] = useState("");
 
   const [isVisible, setIsVisible] = useState(false);
+  const [webSocket, setWebSocket] = useState(null);
+
+
 
   const navigate = useNavigate();
 
@@ -26,21 +29,40 @@ function App() {
   useEffect(()=>
   {
     axios.get("http://localhost:8000/chats/",{headers:{'Authorization':localStorage.getItem("jwt")}}).then((res)=>
-      {
-        setChats(res.data);
-      }).catch((err)=>
-      {
+    {
+      console.log(chats);
+      setChats(res.data);
+      axios.get("http://localhost:8000/websocket/ticket",{headers:{'Authorization':localStorage.getItem("jwt")}}).then((ticketRes)=>
+        {
+         
+          let websocket = new WebSocket(`ws://localhost:8000?ticket=${ticketRes.data}`);
+
+          websocket.onopen = ()=>
+          {
+            setWebSocket(websocket);
+          
+          };
+    
+        }).catch((err)=>
+        {
           navigate("/login");
-      })
+        })
+    }).catch((err)=>
+    {
+      navigate("/login");
+    })
+    
+      
+    
     
       
     
   }, []);
   
-  function selectChat(chatId)
+  function selectChat(chat)
   {
-   
-    setCurrentChat(chatId);
+    console.log(chat);
+    setCurrentChat(chat);
     
   }
   
@@ -61,7 +83,7 @@ function App() {
             </div>
             {chats.map((chat)=>
               {
-                return (<div className={`chat-item ${currentChat == chat.id ? 'selected':''}`} onClick={()=>{selectChat(chat.id)}} key={chat.id}>
+                return (<div className={`chat-item ${currentChat == chat.id ? 'selected':''}`} onClick={()=>{selectChat(chat)}} key={chat.id}>
                 <img src={`${chat.avatar}`} className='avatar-img'/>
                 <p>{chat.userName}</p>
             </div>)
@@ -70,7 +92,7 @@ function App() {
             
             
         </div>
-        <ChatView chatId={currentChat}></ChatView>
+        <ChatView userName={currentChat.userName} chatId={currentChat.id} userId={currentChat.userId} ws={webSocket}></ChatView>
         <ModalWindow title="Test" isVisible={isVisible} onClose={()=>setIsVisible(false)} >
 
           <div><button onClick={()=>setText(text+"a")}>test</button></div>
