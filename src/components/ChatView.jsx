@@ -48,7 +48,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="", ws=null}
         webSocketMessage = JSON.parse(webSocketMessage.data);
         if(webSocketMessage.type == "new_msg")
         {
-          //console.log(webSocketMessage);
+         
           addNewMessage(webSocketMessage.data);
         }
       })

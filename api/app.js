@@ -44,7 +44,7 @@ app.use("/websocket", cors(corsOptions) , websocket);
 
 let server = app.listen(8000);
 
-server.on("upgrade",async (req, socket, head)=>
+/*server.on("upgrade",async (req, socket, head)=>
     {
         
         let userId;
@@ -67,3 +67,4 @@ server.on("upgrade",async (req, socket, head)=>
         })
         
     })
+*/

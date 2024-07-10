@@ -11,6 +11,10 @@ import Chat from './abstractions/chat';
 import AutoSizeTextArea from './components/AutoSizeTextArea';
 import ChatView from './components/ChatView';
 
+import {getSetupConnectionFunction} from './api/sockets/websocket-utils';
+import getChats from './api/http/get-chats';
+import getWebSocketTicket from './api/http/get-websocket-ticket';
+
 
 function App() {
   
@@ -28,27 +32,19 @@ function App() {
 
   useEffect(()=>
   {
-    axios.get("http://localhost:8000/chats/",{headers:{'Authorization':localStorage.getItem("jwt")}}).then((res)=>
-    {
-      console.log(chats);
-      setChats(res.data);
-      axios.get("http://localhost:8000/websocket/ticket",{headers:{'Authorization':localStorage.getItem("jwt")}}).then((ticketRes)=>
-        {
-         
-          let websocket = new WebSocket(`ws://localhost:8000?ticket=${ticketRes.data}`);
-
-          websocket.onopen = ()=>
-          {
-            setWebSocket(websocket);
-          
-          };
     
-        }).catch((err)=>
-        {
-          navigate("/login");
-        })
+     
+    getChats().then((chatsRes)=>
+    {
+        
+      setChats(chatsRes.data);
+      
+      setupWebSocketConnection();
+
+        
     }).catch((err)=>
     {
+      console.log(err);
       navigate("/login");
     })
     
@@ -58,10 +54,37 @@ function App() {
       
     
   }, []);
-  
+
+  function setupWebSocketConnection()
+  {
+    getWebSocketTicket().then(async(ticketRes)=>
+    {
+        
+      const setupConnection = getSetupConnectionFunction();
+      let websocket = await setupConnection(ticketRes.data);
+          
+      websocket.onclose = async ()=>
+      {
+        if(e.code != 1000 && e.code != 1001)
+        {
+          setupWebSocketConnection();      
+                    
+        }
+      };
+          
+      setWebSocket(websocket);
+          
+    
+      }).catch((err)=>
+      {
+        console.log(err);
+        navigate("/login");
+      })
+  }
+
   function selectChat(chat)
   {
-    console.log(chat);
+    
     setCurrentChat(chat);
     
   }
@@ -83,10 +106,10 @@ function App() {
             </div>
             {chats.map((chat)=>
               {
-                return (<div className={`chat-item ${currentChat == chat.id ? 'selected':''}`} onClick={()=>{selectChat(chat)}} key={chat.id}>
+                return (<div className={`chat-item ${currentChat.id == chat.id ? 'selected':''}`} onClick={()=>{selectChat(chat)}} key={chat.id}>
                 <img src={`${chat.avatar}`} className='avatar-img'/>
                 <p>{chat.userName}</p>
-            </div>)
+                </div>)
             
               })}
             
