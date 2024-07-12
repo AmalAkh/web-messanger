@@ -67,6 +67,20 @@ export default function ChatView({userName,userAvatar,userId,chatId="", ws=null}
     
   
   }
+  function onMessageChange(type, id)
+  {
+    //debugger;
+    setMessages([...messagesRef.current.map((msg)=>
+    {
+      if(id == msg.id)
+      {
+        return {...msg, seen:true}
+      }else
+      {
+        return msg
+      }
+    })])
+  }
 
   useEffect(()=>
   {
@@ -96,6 +110,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="", ws=null}
           {
             return {...message, date:new Date(message.date)}
           }));
+          console.log(res.data);
         }).catch((err)=>
         {
           navigate("/login");
@@ -123,7 +138,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="", ws=null}
               <p>{userName}</p>
             </div>
           </div>
-          <MessageView messages={messages}></MessageView>
+          <MessageView userId={userId} messages={messages} ws={ws} onMessageChange={onMessageChange}></MessageView>
           <div className="bottom-bar">
             {/*<button className='clear attach-btn'><FontAwesomeIcon icon={faPlus} /> </button>*/}
             <AutoSizeTextArea placeholder='Message' value={messageText} onInput={(e)=>setMessageText(e.target.value)}></AutoSizeTextArea>

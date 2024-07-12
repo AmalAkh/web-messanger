@@ -50,30 +50,99 @@
         padding: 0.5rem;
         max-width: 60%;
         display: inline-block;
+        background-color: $main-color;
         border-radius: $border-radius;
-        background-color: $link-blue;
+        
         p
         {
-            color:$main-color;
+            color:black;
+            
             font-family: "Physis-Light";
             &.time
             {
                 text-align: right;
             }
         }
+        &:not(.seen)
+        {
+            .bottom-block
+            {
+                svg.send-check
+                {
+                    left:0px;
+                }
+            }
+        }
+        .bottom-block
+        {
+            
+            display: flex;
+            align-items: center;
+
+            svg
+            {
+                color:$main-color;
+                opacity: 0;
+                &.invisible
+                {
+                    opacity: 0;
+                }
+            }
+            
+            svg.send-check
+            {
+                position: relative;
+                
+                left:-8px;
+
+        
+            }
+            svg.seen-check
+            {
+                position: relative;
+                
+                top: 1px;
+                font-size: 0.95rem;
+                /* border: 1px solid; */
+                color: #18558b;
+                z-index: 2;
+            }
+            .time
+            {
+                flex:auto;
+                order:1;
+                margin-left: 10px;
+               
+            }
+        }
 
        
         &.local-message
         {
-            background-color: $main-color;
             
+            background-color: $link-blue;
             float: right;
             p
             {
-                color:black;
+                color:$main-color;
                 &.time
                 {
                     text-align: left;
+                    margin-left: 0px;
+                    margin-right: 10px;
+                }
+            }
+            .bottom-block
+            {
+                
+                svg
+                {
+                    opacity: 1;
+                }
+                .time
+                {
+                    flex:auto;
+                    order:0;
                 }
             }
         }

@@ -42,6 +42,9 @@ wss.on("connection", (ws, req, userId)=>
             {
                 createNewMessage(messangerRequest, userId);
                     
+            }else if(messangerRequest.type == "see_msg")
+            {
+                seeMessage(messangerRequest.data.senderId,messangerRequest.data.id);
             }
         }catch(err)
         { 
@@ -66,9 +69,24 @@ async function createNewMessage(messangerRequest, senderId)
     await pool.query("INSERT INTO messages VALUES(?, ?, ?, ?, ?, DEFAULT )", [messangerRequest.data.text,messageDate, messangerRequest.data.chatId, senderId, messageId ])
     
 
-    let responseMessage = {type:"new_msg", data:{text:messangerRequest.data.text, date:messageDate,files:[], chatId:messangerRequest.data.chatId, id:messageId}}
+    let responseMessage = {type:"new_msg", data:{text:messangerRequest.data.text, date:messageDate,files:[], chatId:messangerRequest.data.chatId, id:messageId, seen:false}}
     sendMessageToAll(messangerRequest.data.userId, {...responseMessage, data:{...responseMessage.data,isLocal:false}});
     sendMessageToAll(senderId,{...responseMessage, data:{...responseMessage.data,isLocal:true}});
+
+}
+/**
+ * Updates message as seen
+ * @param {String} senderId id of sender of the message
+ * @param {String} messageId sender id
+ * 
+ */
+async function seeMessage(senderId,messageId)
+{   
+    
+    const pool = setupDBConnection();
+  
+    await pool.query("UPDATE messages SET seen = 1 WHERE id = ? ", [messageId ]);
+    sendMessageToAll(senderId,{type:"see_msg", data:{id:messageId}});
 
 }
 /** Sends message through websocket to all connected sockets associated with user id 

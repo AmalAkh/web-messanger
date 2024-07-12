@@ -75,14 +75,21 @@ router.get("/:id/messages/:offset", authorizationMiddleware, async(req,res)=>
 {
     const pool = setupDBConnection();
     
-    const [rows, _] = await pool.query("SELECT text, date, id, (userid = ?) as isLocal FROM messages WHERE chatid = ? ORDER BY DATE DESC LIMIT 100 OFFSET ?", [res.locals.userId, req.params.id, Number(req.params.offset)]);
+    const [rows, _] = await pool.query("SELECT text, date, id,seen, (userid = ?) as isLocal FROM messages WHERE chatid = ? ORDER BY DATE DESC LIMIT 100 OFFSET ?", [res.locals.userId, req.params.id, Number(req.params.offset)]);
 
     
     res.send(rows.reverse().map((message)=>
     {
-        return {...message, isLocal:message.isLocal == 1};
+        return {...message, isLocal:message.isLocal == 1, seen:message.seen == 1};
     }));
     
+});
+router.put(":id/see", authorizationMiddleware, async(req,res)=>
+{
+    const pool = setupDBConnection();
+    await pool.query("UPDATE messages SET seen=1 WHERE id=?", [req.params.id]);
+    res.status(200);
+
 });
 
 
