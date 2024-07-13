@@ -11,7 +11,7 @@ import WebSocketMessage from "../abstractions/websocket-message";
 */
 
 
-export default function MessageView({messages=[],userId, ws=null, onMessageChange=(type, message)=>{}})
+export default function MessageView({messages=[],scrollToEnd=false,userId, ws=null, onMessageChange=(type, message)=>{}})
 {
     
     const [currentDate, setCurrentDate] = useState("");//current date for sticky label
@@ -22,6 +22,8 @@ export default function MessageView({messages=[],userId, ws=null, onMessageChang
     const messageView = useRef(null);
 
     const eventListenerSet  = useRef(false);
+
+    const previousScrollTop = useRef(-1);
     useEffect(()=>
     {
         if(messageView.current.scrollHeight <= messageView.current.clientHeight)
@@ -31,15 +33,26 @@ export default function MessageView({messages=[],userId, ws=null, onMessageChang
             {
                 if(!msg.seen && !msg.isLocal)
                 {
+                    console.log("without scrolling");
                     ws.send(JSON.stringify(new WebSocketMessage("see_msg", {id:msg.id})));
-                    console.log(msg.id);
+                    
                 }
             }
         }
         setTimeout(()=>
         {
-            messageView.current.scroll({left:0, top:messageView.current.scrollHeight, behavior:"instant"});
+            if(previousScrollTop.current == -1)
+            {
+                messageView.current.scroll({left:0, top:messageView.current.scrollHeight, behavior:"instant"});
+                
+            }
+            
         },10);
+        if(scrollToEnd)
+        {
+            messageView.current.scroll({left:0, top:messageView.current.scrollHeight, behavior:"instant"});
+            
+        }
         
     }, [messages])
     useEffect(()=>
@@ -47,18 +60,18 @@ export default function MessageView({messages=[],userId, ws=null, onMessageChang
         if(ws && !eventListenerSet.current)
         {
             
-            console.log("chnagedd seen");
+           
               
             ws.addEventListener("message", (webSocketMessage)=>
             {
                 
               webSocketMessage = JSON.parse(webSocketMessage.data);
-              console.log(webSocketMessage);
+             
               if(webSocketMessage.type == "see_msg")
               {
                 
                 onMessageChange("see", webSocketMessage.data.id);
-                console.log("chnagedd seen");
+                
               }
             })
             eventListenerSet.current = true;
@@ -67,7 +80,7 @@ export default function MessageView({messages=[],userId, ws=null, onMessageChang
 
     function onMessagesScroll(e)
     {
-       
+        previousScrollTop.current = messageView.current.scrollTop;
         for(let el of document.querySelectorAll(".grouped-messages-container p.date"))
         {
 
@@ -76,17 +89,19 @@ export default function MessageView({messages=[],userId, ws=null, onMessageChang
                 setCurrentDate(el.innerText);
             }  
         }
-        if(messageView.current.scrollTop != messageView.current.scrollHeight)
+        if(messageView.current.scrollTop+messageView.current.clientHeight != messageView.current.scrollHeight)
         {
             for(let msg of messages)
                 {
-                    
-                    if(!msg.seen && !msg.isLocal )
+                          
+                    if(!msg.seen && !msg.isLocal && document.getElementById(msg.id).offsetTop <= messageView.current.scrollTop+messageView.current.clientHeight )
                     {
                         
-                        //&& document.getElementById(msg.id).offsetTop <= messageView.current.scrollTop+messageView.current.clientHeight
+                        
                         ws.send(JSON.stringify(new WebSocketMessage("see_msg", {id:msg.id, senderId:userId})));
-                        console.log(msg.id);
+                        onMessageChange("see", msg.id);
+
+                        console.log("seen");
                     }
                 }
         }

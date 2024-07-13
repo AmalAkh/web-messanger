@@ -11,7 +11,7 @@ export default function ChatMessage({text, date,files=[], isLocal=true, seen=fal
             <p className="text">{text}</p>
             <div className="bottom-block">
                 <p className="time">{toTimeString(date)}</p>
-                {seen && <FontAwesomeIcon className="seen-check"  icon={faCheck} />}
+                {(seen && isLocal) && <FontAwesomeIcon className="seen-check"  icon={faCheck} />}
                 <FontAwesomeIcon className="send-check" icon={faCheck} />
 
             </div>

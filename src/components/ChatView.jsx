@@ -40,15 +40,12 @@ export default function ChatView({userName,userAvatar,userId,chatId="", ws=null}
   {
     if(ws && !eventListenerSet.current)
     {
-      console.log("test");
-      
-        
+ 
       ws.addEventListener("message", (webSocketMessage)=>
       {
         webSocketMessage = JSON.parse(webSocketMessage.data);
         if(webSocketMessage.type == "new_msg")
-        {
-         
+        {      
           addNewMessage(webSocketMessage.data);
         }
       })
@@ -69,7 +66,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="", ws=null}
   }
   function onMessageChange(type, id)
   {
-    //debugger;
+    setScrollToEnd(false);
     setMessages([...messagesRef.current.map((msg)=>
     {
       if(id == msg.id)
@@ -118,6 +115,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="", ws=null}
     }
 
   },[chatId]);
+  const [scrollToEnd, setScrollToEnd] = useState(false);
   
   function sendMessage()
   {
@@ -127,6 +125,8 @@ export default function ChatView({userName,userAvatar,userId,chatId="", ws=null}
       let websocketMessage = new WebSocketMessage("new_msg", new Message(messageText.trim(), Date.now(), chatId, userId));
       ws.send(JSON.stringify(websocketMessage));
       setMessageText("");
+      setScrollToEnd(true);
+      
     }
   }
 
@@ -138,7 +138,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="", ws=null}
               <p>{userName}</p>
             </div>
           </div>
-          <MessageView userId={userId} messages={messages} ws={ws} onMessageChange={onMessageChange}></MessageView>
+          <MessageView userId={userId} messages={messages} scrollToEnd={scrollToEnd}  ws={ws} onMessageChange={onMessageChange}></MessageView>
           <div className="bottom-bar">
             {/*<button className='clear attach-btn'><FontAwesomeIcon icon={faPlus} /> </button>*/}
             <AutoSizeTextArea placeholder='Message' value={messageText} onInput={(e)=>setMessageText(e.target.value)}></AutoSizeTextArea>

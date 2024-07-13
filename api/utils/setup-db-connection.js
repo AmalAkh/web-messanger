@@ -7,7 +7,8 @@ function setupDBConnection()
             user:"root",
             host:"localhost",
             password:"amal2004",
-            database:"web-chat-app-db"
+            database:"web-chat-app-db",
+            idleTimeout: 6000
         });
 }
 module.exports = setupDBConnection;
