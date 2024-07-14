@@ -5,6 +5,8 @@ export default class Chat
     {
         this.userName = userName;
         this.avatar = avatar;
+        this.unseenMessageCounts = 0;
+        this.lastMessageText = null;
         this.id = id;
         this.userId = userId;
         

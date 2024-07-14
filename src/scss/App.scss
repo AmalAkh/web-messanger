@@ -11,7 +11,7 @@ main
     flex:2;
     z-index: 9;
     box-shadow: 2px 0px 2px -1px #ececec;
-
+    overflow: hidden;
     background-color: $main-color;
     
 
@@ -59,11 +59,11 @@ main
 
 .avatar-img
 {
-    background-color: $light-gray;
+    background-color: $dark-gray;
     width:2.2rem;
     height:2.2rem;
     overflow: hidden;
-    border-radius: $border-radius;
+    border-radius: 50%;
 }
 .my-profile
 {
@@ -93,6 +93,9 @@ main
 {
 
     display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
+   
     align-items: center;
     padding: 10px;
     cursor: pointer;
@@ -101,12 +104,59 @@ main
     {
         background-color: $light-gray;
     }
-    p
+    img
     {
-        margin-left: 10px;
+        min-height: 50px;
+        min-width: 50px;
+        flex:none;
+        border-radius: 50%;
     }
+    .text-block
+    {
+        flex: auto;
+        p
+        {
+           
+            margin-left: 10px;
+            &.last-message
+            {
+                margin-top: 10px;
+                font-size: 0.75rem;
+                border-radius: $border-radius;
+                font-family: "Physis-Light";
+                max-height: 3ch;
+                
+                
+                color:$dark-gray;
+                
+              
+               
+                text-overflow: ellipsis;
+                overflow: hidden;
+                
+            }
+        }
+    }
+    .unseen-messages-counter
+    {
+        flex:none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        width:2rem;
+        height: 2rem;
+        text-align: center;
+        
+        background-color: $link-blue;
+        p
+        {
+            color:$main-color;
+        }
+    }
+    
     &.selected
     {
-        background-color: $link-blue;
+        background-color: $light-gray;
     }
 }

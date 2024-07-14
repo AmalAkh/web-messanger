@@ -15,7 +15,7 @@ import WebSocketMessage from '../abstractions/websocket-message';
 
 
 
-export default function ChatView({userName,userAvatar,userId,chatId="", ws=null})
+export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMessage=()=>{}, ws=null})
 {
 
   const chatIdRef = useRef(chatId);
@@ -77,6 +77,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="", ws=null}
         return msg
       }
     })])
+    onSeeMessage();
   }
 
   useEffect(()=>
@@ -136,6 +137,9 @@ export default function ChatView({userName,userAvatar,userId,chatId="", ws=null}
             <img src="" className='avatar-img'/>
             <div>
               <p>{userName}</p>
+              
+              
+              
             </div>
           </div>
           <MessageView userId={userId} messages={messages} scrollToEnd={scrollToEnd}  ws={ws} onMessageChange={onMessageChange}></MessageView>

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from "react-router-dom";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -18,12 +18,19 @@ import getWebSocketTicket from './api/http/get-websocket-ticket';
 
 function App() {
   
-  const [currentChat, setCurrentChat] = useState("");
-  const [chats, setChats] = useState([]);
+  const [currentChat, setCurrentChat] = useState({});
+  const [chats, _setChats] = useState([]);
   const [text, setText] = useState("");
 
   const [isVisible, setIsVisible] = useState(false);
   const [webSocket, setWebSocket] = useState(null);
+
+  const chatsRef = useRef([]);
+  function setChats(newChats)
+  {
+    _setChats(newChats);
+    chatsRef.current = newChats;
+  }
 
 
 
@@ -33,27 +40,31 @@ function App() {
   useEffect(()=>
   {
     
-     
-    getChats().then((chatsRes)=>
+    if(webSocket == null)
     {
-        
-      setChats(chatsRes.data);
-      
-      setupWebSocketConnection();
 
+    
+      getChats().then((chatsRes)=>
+      {
+          
+        setChats(chatsRes.data);
         
-    }).catch((err)=>
-    {
-      console.log(err);
-      navigate("/login");
-    })
+        setupWebSocketConnection();
+
+          
+      }).catch((err)=>
+      {
+        console.log(err);
+        navigate("/login");
+      })
+    }
     
       
     
     
       
     
-  }, []);
+  }, [currentChat,webSocket]);
 
   function setupWebSocketConnection()
   {
@@ -73,6 +84,28 @@ function App() {
       };
           
       setWebSocket(websocket);
+      websocket.addEventListener("message",(websocketMessage)=>
+      {
+        const message = JSON.parse(websocketMessage.data);
+        
+        if(message.type == "new_msg" )
+        {
+          
+          console.log(chatsRef.current);
+          setChats([...chatsRef.current.map((chat)=>
+          {
+            if(chat.id == message.data.chatId)
+            {
+              if(!message.data.isLocal)
+              {
+                return {...chat, unseenMessagesCount:chat.unseenMessagesCount+1}
+              }
+              return {...chat, lastMessageText:message.data.text}
+            }
+            return chat;
+          })])
+        }
+      })
           
     
       }).catch((err)=>
@@ -81,7 +114,25 @@ function App() {
         navigate("/login");
       })
   }
-
+  function seeMessage()
+  {
+    
+    
+      
+      setChats([...chatsRef.current.map((chat)=>
+      {
+        if(chat.id == currentChat.id)
+        {
+          
+          return {...chat, unseenMessagesCount:chat.unseenMessagesCount-1}
+        }
+        return chat;
+      })])
+    
+        
+        
+      
+  }
   function selectChat(chat)
   {
     
@@ -108,14 +159,22 @@ function App() {
               {
                 return (<div className={`chat-item ${currentChat.id == chat.id ? 'selected':''}`} onClick={()=>{selectChat(chat)}} key={chat.id}>
                 <img src={`${chat.avatar}`} className='avatar-img'/>
-                <p>{chat.userName}</p>
+                <div className='text-block'>
+                  <p>{chat.userName}</p>
+                  <p className='last-message'>{chat.lastMessageText}</p>
+                  
+                </div>
+                {chat.unseenMessagesCount > 0 && <div className='unseen-messages-counter'>
+                 <p>{chat.unseenMessagesCount}</p>
+                </div>}
+                
                 </div>)
             
               })}
             
             
         </div>
-        <ChatView userName={currentChat.userName} chatId={currentChat.id} userId={currentChat.userId} ws={webSocket}></ChatView>
+        <ChatView userName={currentChat.userName} chatId={currentChat.id} userId={currentChat.userId} ws={webSocket} onSeeMessage={seeMessage}></ChatView>
         <ModalWindow title="Test" isVisible={isVisible} onClose={()=>setIsVisible(false)} >
 
           <div><button onClick={()=>setText(text+"a")}>test</button></div>
