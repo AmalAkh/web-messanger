@@ -5,6 +5,7 @@ import { faCheck} from '@fortawesome/free-solid-svg-icons'
 
 export default function ChatMessage({text, date,files=[], isLocal=true, seen=false})
 {
+    
     return <div  className="message-container">
 
         <div className={`message ${isLocal && "local-message"} ${seen && "seen"}`}>

@@ -19,7 +19,9 @@ export default function MessageView({messages=[],userId})
     const [currentDate, setCurrentDate] = useState("");//current date for sticky label
 
     let groupedMessages = groupByDate(messages);
-  
+    
+    
+
     
     const messageView = useRef(null);
 

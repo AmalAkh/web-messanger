@@ -12,6 +12,7 @@ import ChatMessage from './ChatMessage';
 import Message from '../abstractions/message';
 import WebSocketMessage from '../abstractions/websocket-message';
 import eventBus from '../utils/event-bus';
+import createDateWithOffset from '../utils/create-date-with-offset';
 
 
 
@@ -64,7 +65,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
     if(chatIdRef.current == newMessage.chatId)
     {
       console.log("new message was added");
-      setMessages([...messagesRef.current, {...newMessage,date:new Date(newMessage.date) }])
+      setMessages([...messagesRef.current, {...newMessage,date:createDateWithOffset(newMessage.date) }])
     }
     
   
@@ -94,7 +95,8 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
         {
           setMessages(res.data.map((message)=>
           {
-            return {...message, date:new Date(message.date)}
+            
+            return {...message, date:createDateWithOffset(message.date)};
           }));
           
         }).catch((err)=>
