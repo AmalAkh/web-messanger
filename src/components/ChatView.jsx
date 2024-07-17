@@ -13,6 +13,7 @@ import Message from '../abstractions/message';
 import WebSocketMessage from '../abstractions/websocket-message';
 import eventBus from '../utils/event-bus';
 import createDateWithOffset from '../utils/create-date-with-offset';
+import "./../scss/ChatView.scss";
 
 
 
@@ -127,6 +128,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
             <img src="" className='avatar-img'/>
             <div>
               <p>{userName}</p>
+              <p className='user-status'>online</p>
               
               
               
