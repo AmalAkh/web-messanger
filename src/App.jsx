@@ -15,23 +15,34 @@ import {getSetupConnectionFunction} from './api/sockets/websocket-utils';
 import getChats from './api/http/get-chats';
 import getWebSocketTicket from './api/http/get-websocket-ticket';
 
+import eventBus from './utils/event-bus';
+import WebSocketMessage from './abstractions/websocket-message';
 
 function App() {
   
-  const [currentChat, setCurrentChat] = useState({});
+  const [currentChat, _setCurrentChat] = useState({});
+  const currentChatRef = useRef({});
+  function setCurrentChat(chat)
+  {
+    _setCurrentChat(chat);
+    currentChatRef.current = chat;
+  }
+
   const [chats, _setChats] = useState([]);
-  const [text, setText] = useState("");
-
-  const [isVisible, setIsVisible] = useState(false);
-  const [webSocket, setWebSocket] = useState(null);
-
-  const chatsRef = useRef([]);
   function setChats(newChats)
   {
     _setChats(newChats);
     chatsRef.current = newChats;
   }
+  const [text, setText] = useState("");
 
+  const [isVisible, setIsVisible] = useState(false);
+  
+
+  const chatsRef = useRef([]);
+  
+  
+  const webSocketRef = useRef(null);
 
 
   const navigate = useNavigate();
@@ -40,99 +51,124 @@ function App() {
   useEffect(()=>
   {
     
-    if(webSocket == null)
-    {
+    
 
     
-      getChats().then((chatsRes)=>
+      getChats().then(async (chatsRes)=>
       {
           
         setChats(chatsRes.data);
         
-        setupWebSocketConnection();
-
-          
-      }).catch((err)=>
-      {
-        console.log(err);
-        navigate("/login");
-      })
-    }
-    
-      
-    
-    
-      
-    
-  }, [currentChat,webSocket]);
-
-  function setupWebSocketConnection()
-  {
-    getWebSocketTicket().then(async(ticketRes)=>
-    {
-        
-      const setupConnection = getSetupConnectionFunction();
-      let websocket = await setupConnection(ticketRes.data);
-          
-      websocket.onclose = async ()=>
-      {
-        if(e.code != 1000 && e.code != 1001)
+        await setupWebSocketConnection();
+        console.log("connection setup");
+        eventBus.addEventListener("see-nonlocal-message",(message)=>
         {
-          setupWebSocketConnection();      
-                    
-        }
-      };
-          
-      setWebSocket(websocket);
-      websocket.addEventListener("message",(websocketMessage)=>
-      {
-        const message = JSON.parse(websocketMessage.data);
-        
-        if(message.type == "new_msg" )
-        {
-          
-          console.log(chatsRef.current);
+          //* In case we have seen message of another user*/ 
+                
+          webSocketRef.current.send(JSON.stringify(new WebSocketMessage("see_msg", message)))
           setChats([...chatsRef.current.map((chat)=>
           {
-            if(chat.id == message.data.chatId)
-            {
-              if(!message.data.isLocal)
+                  
+                  
+              if(chat.id == currentChatRef.current.id)
               {
-                return {...chat, unseenMessagesCount:chat.unseenMessagesCount+1}
+                      
+                return {...chat, unseenMessagesCount:chat.unseenMessagesCount-1}
               }
-              return {...chat, lastMessageText:message.data.text}
-            }
-            return chat;
+                return chat;
           })])
-        }
-      })
+        })
+        eventBus.addEventListener("send-message", (message)=>
+        {
+
+          webSocketRef.current.send(JSON.stringify(new WebSocketMessage("new_msg", message)));
+        })
+
+        webSocketRef.current.addEventListener("message",(websocketMessage)=>
+        {
+            
+            const message = JSON.parse(websocketMessage.data);
+            
+            if(message.type == "new_msg" )
+            {
+              
+              eventBus.emit("new-message", message.data);
+              
+              setChats([...chatsRef.current.map((chat)=>
+              {
+                
+                
+                if(chat.id == message.data.chatId)
+                {
+                  if(!message.data.isLocal)
+                  {
+                    return {...chat, unseenMessagesCount:chat.unseenMessagesCount+1}
+                  }
+                  return {...chat, lastMessageText:message.data.text}
+                }
+                return chat;
+              })])
+            }else if(message.type == "see_msg")
+            {
+              /**In case somebody has seen our message */
+              eventBus.emit("see-local-message", message.data);
+            }
+          })
           
-    
       }).catch((err)=>
       {
         console.log(err);
         navigate("/login");
       })
-  }
-  function seeMessage()
+
+      
+    
+    
+      
+    
+    
+      
+    
+  }, []);
+
+
+  
+  function setupWebSocketConnection()
   {
-    
-    
-      
-      setChats([...chatsRef.current.map((chat)=>
-      {
-        if(chat.id == currentChat.id)
+    return new Promise((resolve, reject)=>
+    {
+      getWebSocketTicket().then(async(ticketRes)=>
         {
+            
+          const setupConnection = getSetupConnectionFunction();
+          let websocket = await setupConnection(ticketRes.data);
+           
+          websocket.onclose = async ()=>
+          {
+            if(e.code != 1000 && e.code != 1001)
+            {
+              setupWebSocketConnection();      
+                        
+            }
+          };
+          webSocketRef.current = websocket;
+          resolve(websocket);
           
-          return {...chat, unseenMessagesCount:chat.unseenMessagesCount-1}
-        }
-        return chat;
-      })])
+          
+          
+          
+          
+              
+        
+          }).catch((err)=>
+          {
+            console.log(err);
+            navigate("/login");
+          })
+    })
     
-        
-        
-      
   }
+  
   function selectChat(chat)
   {
     
@@ -174,7 +210,7 @@ function App() {
             
             
         </div>
-        <ChatView userName={currentChat.userName} chatId={currentChat.id} userId={currentChat.userId} ws={webSocket} onSeeMessage={seeMessage}></ChatView>
+        <ChatView userName={currentChat.userName} chatId={currentChat.id} userId={currentChat.userId}></ChatView>
         <ModalWindow title="Test" isVisible={isVisible} onClose={()=>setIsVisible(false)} >
 
           <div><button onClick={()=>setText(text+"a")}>test</button></div>

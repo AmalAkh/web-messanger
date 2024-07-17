@@ -3,15 +3,17 @@ import "../scss/MessagesView.scss";
 import groupByDate from "../utils/group-by-date";
 import Message from "./ChatMessage";
 import WebSocketMessage from "../abstractions/websocket-message";
+import eventBus from "../utils/event-bus";
 
-/** @description Component for displaying messages in ChatView component 
- * 
+/**  Component for displaying messages in ChatView component 
+ * @param {Array} messages - array of messages
+ *  @param {String} userId - the id of conversation partner 
  * 
  * 
 */
 
 
-export default function MessageView({messages=[],scrollToEnd=false,userId, ws=null, onMessageChange=(type, message)=>{}})
+export default function MessageView({messages=[],userId})
 {
     
     const [currentDate, setCurrentDate] = useState("");//current date for sticky label
@@ -21,11 +23,14 @@ export default function MessageView({messages=[],scrollToEnd=false,userId, ws=nu
     
     const messageView = useRef(null);
 
-    const eventListenerSet  = useRef(false);
-
+    
+    /**
+     * previous scroll top to prevent from automatic scrlling to the end after update
+     */
     const previousScrollTop = useRef(-1);
     useEffect(()=>
     {
+        /** in case we dont have scrolling we have to set seen=true for all messages because we see all them at once */
         if(messageView.current.scrollHeight <= messageView.current.clientHeight)
         {
             
@@ -33,8 +38,9 @@ export default function MessageView({messages=[],scrollToEnd=false,userId, ws=nu
             {
                 if(!msg.seen && !msg.isLocal)
                 {
-                    console.log("without scrolling");
-                    ws.send(JSON.stringify(new WebSocketMessage("see_msg", {id:msg.id})));
+                    
+                    eventBus.emit("see-nonlocal-message", {id:msg.id});
+                    
                     
                 }
             }
@@ -45,38 +51,27 @@ export default function MessageView({messages=[],scrollToEnd=false,userId, ws=nu
             {
                 messageView.current.scroll({left:0, top:messageView.current.scrollHeight, behavior:"instant"});
                 
+            }else
+            {
+                messageView.current.scroll({left:0, top:previousScrollTop.current, behavior:"instant"});
+
             }
             
         },10);
-        if(scrollToEnd)
+
+        /** scroll to the end in case we send new message  */
+        if(scrollToEnd.current)
         {
-            messageView.current.scroll({left:0, top:messageView.current.scrollHeight, behavior:"instant"});
-            
+
+            setTimeout(()=>
+            {
+                messageView.current.scroll({left:0, top:messageView.current.scrollHeight, behavior:"smooth"});
+                scrollToEnd.current = false;
+            },10);
         }
         
     }, [messages])
-    useEffect(()=>
-    {
-        if(ws && !eventListenerSet.current)
-        {
-            
-           
-              
-            ws.addEventListener("message", (webSocketMessage)=>
-            {
-                
-              webSocketMessage = JSON.parse(webSocketMessage.data);
-             
-              if(webSocketMessage.type == "see_msg")
-              {
-                
-                onMessageChange("see", webSocketMessage.data.id);
-                
-              }
-            })
-            eventListenerSet.current = true;
-        }
-    }, [ws]);
+    
 
     function onMessagesScroll(e)
     {
@@ -96,18 +91,24 @@ export default function MessageView({messages=[],scrollToEnd=false,userId, ws=nu
                           
                     if(!msg.seen && !msg.isLocal && document.getElementById(msg.id).offsetTop <= messageView.current.scrollTop+messageView.current.clientHeight )
                     {
-                        
-                        
-                        ws.send(JSON.stringify(new WebSocketMessage("see_msg", {id:msg.id, senderId:userId})));
-                        onMessageChange("see", msg.id);
-
-                        console.log("seen");
+                    
+                        eventBus.emit("see-nonlocal-message", {id:msg.id, senderId:userId});
+                    
                     }
                 }
         }
         
         
     }
+    const scrollToEnd = useRef(false);
+    useEffect(()=>
+    {
+    
+        eventBus.addEventListener("new-message",(message)=>
+        {
+            scrollToEnd.current = true;
+        })
+    },[])
     return <>
     <div className="messages-view" onScroll={onMessagesScroll} ref={messageView}>
         

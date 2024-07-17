@@ -1,6 +1,8 @@
 /** @module WSserver 
  * @description exports WebSocketServer to process socket connections and messages 
  */
+const mysql = require("mysql2/promise");
+
 const ws = require("ws");
 
 const setupDBConnection = require("../utils/setup-db-connection");
@@ -8,6 +10,7 @@ const  { v4 }  = require("uuid");
 
 const wss = new ws.WebSocketServer({port:8080});
 
+const pool = setupDBConnection();
 
 /**existing connections grouped by user id*/
 let connections = {};
@@ -60,19 +63,19 @@ wss.on("connection", (ws, req, userId)=>
  * 
  */
 async function createNewMessage(messangerRequest, senderId)
-{
-    const pool = setupDBConnection();
-  
+{ 
+    
     let messageId  = v4();
     const date = new Date();
+    
     let messageDate = `${date.getUTCFullYear()}.${date.getUTCMonth()+1}.${date.getUTCDate()} ${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`; 
-    await pool.query("INSERT INTO messages VALUES(?, ?, ?, ?, ?, DEFAULT )", [messangerRequest.data.text,messageDate, messangerRequest.data.chatId, senderId, messageId ])
+    await pool.execute("INSERT INTO messages VALUES(?, ?, ?, ?, ?, DEFAULT )", [messangerRequest.data.text,messageDate, messangerRequest.data.chatId, senderId, messageId ])
     
 
     let responseMessage = {type:"new_msg", data:{text:messangerRequest.data.text, date:messageDate,files:[], chatId:messangerRequest.data.chatId, id:messageId, seen:false}}
     sendMessageToAll(messangerRequest.data.userId, {...responseMessage, data:{...responseMessage.data,isLocal:false}});
     sendMessageToAll(senderId,{...responseMessage, data:{...responseMessage.data,isLocal:true}});
-
+    
 }
 /**
  * Updates message as seen
@@ -82,12 +85,20 @@ async function createNewMessage(messangerRequest, senderId)
  */
 async function seeMessage(senderId,messageId)
 {   
-    
-    const pool = setupDBConnection();
-  
-    await pool.query("UPDATE messages SET seen = 1 WHERE id = ? ", [messageId ]);
-    sendMessageToAll(senderId,{type:"see_msg", data:{id:messageId}});
-
+    try
+    {
+        
+        
+        await pool.execute("UPDATE messages SET seen = 1 WHERE id = ? ", [messageId ]);
+        sendMessageToAll(senderId,{type:"see_msg", data:{id:messageId}});
+        
+    }catch(err)
+    {
+        setTimeout(()=>
+        {
+            seeMessage(senderId, messageId);
+        }, 1000);
+    }
 }
 /** Sends message through websocket to all connected sockets associated with user id 
  * @param {String} userId user id
