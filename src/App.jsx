@@ -57,7 +57,7 @@ function App() {
       getChats().then(async (chatsRes)=>
       {
         let chat = new Chat("test", "", "userdidi", []);
-        setChats([chat,chat,chat,chat,chat,chat,chat,chat,chat,chat,...chatsRes.data]);
+        setChats([...chatsRes.data]);
         
         await setupWebSocketConnection();
         console.log("connection setup");

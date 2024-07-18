@@ -29,9 +29,9 @@ main
         width:40px;
         height:40px;
         border-radius: 50%;
-        position:sticky;
+        position:fixed;
         bottom: 10px;
-        left: 80%;
+        left: 22.5%;
         @include shadow($blur:10px, $spread:-1px);
         svg
         {
@@ -47,6 +47,7 @@ main
     flex:6;
     display: flex;
     flex-direction: column;
+    z-index: 1;
     
     
     .top-bar
@@ -97,10 +98,10 @@ main
 .my-profile
 {
     padding: 10px;
-    
+    z-index:14;
     display: flex;
     align-items: center;
-    @include shadow($blur:7px);
+    @include shadow($blur:5px, $x:0px, $spread:-5px);
 
     .add-info
     {
@@ -117,7 +118,7 @@ main
     }
    
     
-    border-bottom: 2px solid $light-gray;
+    
 }
 .chat-item
 {
