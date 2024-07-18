@@ -2,7 +2,7 @@ const express = require("express");
 const  { v4 }  = require("uuid");
 
 const authorizationMiddleware = require("./../utils/authorization-middleware");
-const setupDBConnection = require("./../utils/setup-db-connection");
+const pool = require("./../utils/setup-db-connection");
 const ApiError = require("../utils/api-error");
 
 
@@ -12,7 +12,7 @@ const jsonParser = express.json();
 
 router.post("/new",authorizationMiddleware, jsonParser, async(req,res)=>
 {
-    const pool = setupDBConnection();
+   
 
     
     const chatId = v4();
@@ -45,7 +45,7 @@ router.post("/new",authorizationMiddleware, jsonParser, async(req,res)=>
 })
 router.get("/",authorizationMiddleware, async(req,res)=>
 {
-        const pool = setupDBConnection();
+       
         console.log(res.locals.userId);
         const [rows, _] = await pool.query("SELECT  id,id as currentChatId, IF(user1id = ?, user2id, user1id) AS userId, (SELECT name FROM users WHERE id = userId) as userName, (SELECT COUNT(*) FROM messages WHERE chatid=currentChatId AND seen=0 AND userid!=?) as unseenMessagesCount, (SELECT text FROM messages WHERE chatid=currentChatId ORDER BY date DESC LIMIT 1 ) as lastMessageText FROM chats  WHERE (user1id = ? OR user2id = ?)",[res.locals.userId,res.locals.userId, res.locals.userId,res.locals.userId]);
         
@@ -55,7 +55,7 @@ router.get("/",authorizationMiddleware, async(req,res)=>
 
 router.delete("/:id",authorizationMiddleware, async (req, res)=>
 {
-    const pool = setupDBConnection();
+   
 
     const result = await  pool.query("DELETE FROM chats WHERE id=?", [req.params.id]);
     if(result[0].affectedRows == 0)
@@ -73,7 +73,7 @@ router.delete("/:id",authorizationMiddleware, async (req, res)=>
 
 router.get("/:id/messages/:offset", authorizationMiddleware, async(req,res)=>
 {
-    const pool = setupDBConnection();
+   
     
     const [rows, _] = await pool.query("SELECT text, date, id,seen, (userid = ?) as isLocal FROM messages WHERE chatid = ? ORDER BY DATE DESC LIMIT 100 OFFSET ?", [res.locals.userId, req.params.id, Number(req.params.offset)]);
 
@@ -86,7 +86,7 @@ router.get("/:id/messages/:offset", authorizationMiddleware, async(req,res)=>
 });
 router.put(":id/see", authorizationMiddleware, async(req,res)=>
 {
-    const pool = setupDBConnection();
+   
     await pool.query("UPDATE messages SET seen=1 WHERE id=?", [req.params.id]);
     res.status(200);
 

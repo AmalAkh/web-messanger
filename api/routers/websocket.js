@@ -6,7 +6,7 @@
 const express = require("express");
 const authorizationMiddleware = require("../utils/authorization-middleware");
 const jwt = require("jsonwebtoken");
-const setupDBConnection = require("../utils/setup-db-connection");
+const pool = require("../utils/setup-db-connection");
 const jwtSecretKey = require("../utils/jwt-secret-key");
 
 const router = express.Router();

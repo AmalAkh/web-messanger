@@ -89,16 +89,31 @@ export default function MessageView({messages=[],userId})
         if(messageView.current.scrollTop+messageView.current.clientHeight != messageView.current.scrollHeight)
         {
             for(let msg of messages)
-                {
+            {
                           
-                    if(!msg.seen && !msg.isLocal && document.getElementById(msg.id).offsetTop <= messageView.current.scrollTop+messageView.current.clientHeight )
-                    {
+                if(!msg.seen && !msg.isLocal && document.getElementById(msg.id).offsetTop <= messageView.current.scrollTop+messageView.current.clientHeight )
+                {
                     
-                        eventBus.emit("see-nonlocal-message", {id:msg.id, senderId:userId});
+                    eventBus.emit("see-nonlocal-message", {id:msg.id, senderId:userId});
                     
-                    }
                 }
+            }
         }
+        if(messageView.current.scrollHeight == messageView.current.scrollTop+messageView.current.clientHeight)
+        {
+                
+            for(let msg of messages)
+            {
+                if(!msg.seen && !msg.isLocal)
+                {
+                        
+                    eventBus.emit("see-nonlocal-message", {id:msg.id,senderId:userId});
+                        
+                        
+                }
+            }
+        }
+        
         
         
     }
@@ -108,7 +123,12 @@ export default function MessageView({messages=[],userId})
     
         eventBus.addEventListener("new-message",(message)=>
         {
-            scrollToEnd.current = true;
+            if(message.isLocal)
+            {
+                
+                scrollToEnd.current = true;
+            }
+            
         })
     },[])
     return <>

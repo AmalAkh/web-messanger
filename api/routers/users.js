@@ -5,7 +5,7 @@ const  { v4 }  = require("uuid");
 
 
 const ApiError = require("./../utils/api-error");
-const setupDBConnection = require("./../utils/setup-db-connection");
+const pool = require("./../utils/setup-db-connection");
 const jwtSecretKey = require("./../utils/jwt-secret-key");
 const authorizationMiddleware = require("./../utils/authorization-middleware");
 
@@ -19,7 +19,7 @@ const jsonParser = express.json();
 router.post("/new",jsonParser, async (req, res)=>
 {
     
-    const pool = setupDBConnection();
+   
     
     if(req.body.nickname && req.body.nickname.length > 16)
     {
@@ -76,7 +76,7 @@ router.post("/new",jsonParser, async (req, res)=>
 router.post("/confirm/:userid", async(req,res)=>
 {
 
-    const pool = setupDBConnection();
+   
 
     const [rows, fields] = await pool.query("UPDATE users SET confirmed=1 WHERE id=?", [req.params.userid]);
     if(rows.affectedRows == 0)
@@ -91,7 +91,7 @@ router.post("/confirm/:userid", async(req,res)=>
 router.post("/auth", jsonParser,  async (req,res)=>
 {
 
-    const pool = setupDBConnection();
+   
     const [rows, _] = await pool.query("SELECT password, id,confirmed FROM users  WHERE email = ? OR  nickname = ?", [req.body.login, req.body.login]);
     if(rows.length == 0)
     {
@@ -122,7 +122,7 @@ router.post("/auth", jsonParser,  async (req,res)=>
 })
 router.delete("/remove",authorizationMiddleware, async (req, res)=>
 {
-    const pool = setupDBConnection();
+   
     const [rows, fields] = await pool.query("DELETE FROM users WHERE id=?", [res.locals.userId]);
     if(rows.affectedRows == 0)
     {
@@ -138,7 +138,7 @@ router.delete("/remove",authorizationMiddleware, async (req, res)=>
 
 router.get("/:id/status/",authorizationMiddleware, async (req,res)=>
 {
-    const pool = setupDBConnection();
+   
 
     const [rows, _] = await pool.query("SELECT status FROM users WHERE id = ?", [req.params.id]);
     if(rows.length !=0)

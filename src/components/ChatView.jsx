@@ -52,6 +52,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
     eventBus.addEventListener("see-local-message", (message)=>
     {
       seeMessage(message.id);
+      
     })
     eventBus.addEventListener("see-nonlocal-message", (message)=>
     {
@@ -88,7 +89,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
     
     if(chatIdRef.current == newMessage.chatId)
     {
-      console.log("new message was added");
+     
       setMessages([...messagesRef.current, {...newMessage,date:createDateWithOffset(newMessage.date) }])
     }
     

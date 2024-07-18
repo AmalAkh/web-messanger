@@ -13,4 +13,4 @@ function setupDBConnection()
            
         });
 }
-module.exports = setupDBConnection;
+module.exports = setupDBConnection();

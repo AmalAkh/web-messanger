@@ -5,12 +5,12 @@ const mysql = require("mysql2/promise");
 
 const ws = require("ws");
 
-const setupDBConnection = require("../utils/setup-db-connection");
+const pool = require("../utils/setup-db-connection");
 const  { v4 }  = require("uuid");
 
 const wss = new ws.WebSocketServer({port:8080});
 
-const pool = setupDBConnection();
+
 
 /**existing connections grouped by user id*/
 let connections = {};
@@ -88,20 +88,13 @@ async function createNewMessage(messangerRequest, senderId)
  */
 async function seeMessage(senderId,messageId)
 {   
-    try
-    {
+     
+    await pool.execute("UPDATE messages SET seen = 1 WHERE id = ? ", [messageId ]);
+    sendMessageToAll(senderId,{type:"see_msg", data:{id:messageId}});
         
+    
         
-        await pool.execute("UPDATE messages SET seen = 1 WHERE id = ? ", [messageId ]);
-        sendMessageToAll(senderId,{type:"see_msg", data:{id:messageId}});
-        
-    }catch(err)
-    {
-        setTimeout(()=>
-        {
-            seeMessage(senderId, messageId);
-        }, 1000);
-    }
+    
 }
 
 async function setStatus(userId, status)
