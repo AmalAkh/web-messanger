@@ -23,6 +23,8 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
 
   const chatIdRef = useRef(chatId);
   chatIdRef.current = chatId;
+  const userIdRef = useRef(userId);
+  userIdRef.current = userId;
   const [messages, _setMessages] = useState([]);
   const messagesRef = useRef([]);
 
@@ -58,9 +60,14 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
     {
       seeMessage(message.id);
     })
-    eventBus.addEventListener("status-change", (status)=>
+    
+    eventBus.addEventListener("status-change", (changedUserId, status)=>
     {
-      setUserStatus(status);
+      if(userIdRef.current == changedUserId)
+      {
+        setUserStatus(status);
+      }
+      
     })
       
       

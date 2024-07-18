@@ -117,7 +117,7 @@ function App() {
             }else if(message.type == "status-change")
             {
               
-              eventBus.emit("status-change", message.data.status);
+              eventBus.emit("status-change", message.data.userId, message.data.status);
             }
           })
           

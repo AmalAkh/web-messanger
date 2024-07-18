@@ -103,7 +103,7 @@ async function setStatus(userId, status)
     await pool.execute("UPDATE users SET status=? WHERE id = ?", [status, userId]);
     for(let row of rows)
     {
-        sendMessageToAll(row.companionId, {type:"status-change",data:{status:status}});
+        sendMessageToAll(row.companionId, {type:"status-change",data:{userId:userId,status:status}});
     }
 }
 /** Sends message through websocket to all connected sockets associated with user id 
