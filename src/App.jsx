@@ -17,6 +17,7 @@ import getWebSocketTicket from './api/http/get-websocket-ticket';
 
 import eventBus from './utils/event-bus';
 import WebSocketMessage from './abstractions/websocket-message';
+import getImage from './api/http/get-image';
 
 function App() {
   
@@ -190,7 +191,7 @@ function App() {
       <main>
         <div className='chats-list'>
             <div className="my-profile">
-              <img className='avatar-img'/>
+              <img className='avatar-img' src={getImage(undefined)}/>
               <div className='add-info'>
                 <h3>John Johnson</h3>
                 <button className='link' onClick={()=>{setIsVisible(true)}}>Change</button>
@@ -200,7 +201,7 @@ function App() {
             {chats.map((chat)=>
               {
                 return (<div className={`chat-item ${currentChat.id == chat.id ? 'selected':''}`} onClick={()=>{selectChat(chat)}} key={chat.id}>
-                <img src={`${chat.avatar}`} className='avatar-img'/>
+                <img src={getImage(null)} className='avatar-img'/>
                 <div className='text-block'>
                   <p>{chat.userName}</p>
                   <p className='last-message'>{chat.lastMessageText}</p>

@@ -14,6 +14,7 @@ import WebSocketMessage from '../abstractions/websocket-message';
 import eventBus from '../utils/event-bus';
 import createDateWithOffset from '../utils/create-date-with-offset';
 import "./../scss/ChatView.scss";
+import getImage from '../api/http/get-image';
 
 
 
@@ -161,7 +162,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
     return <>
     <div className='chat'>
           <div className='top-bar'>
-            <img src="" className='avatar-img'/>
+            <img src={getImage(undefined)} className='avatar-img'/>
             <div>
               <p>{userName}</p>
               <p className={`user-status ${currentUserStatus == "online" && 'online'}`}>{currentUserStatus}</p>
