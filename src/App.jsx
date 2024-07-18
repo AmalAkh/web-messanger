@@ -2,7 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from "react-router-dom";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperPlane, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPaperPlane, faPlus} from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
 
 import "./scss/App.scss";
@@ -56,8 +56,8 @@ function App() {
     
       getChats().then(async (chatsRes)=>
       {
-          
-        setChats(chatsRes.data);
+        let chat = new Chat("test", "", "userdidi", []);
+        setChats([chat,chat,chat,chat,chat,chat,chat,chat,chat,chat,...chatsRes.data]);
         
         await setupWebSocketConnection();
         console.log("connection setup");
@@ -66,6 +66,7 @@ function App() {
           //* In case we have seen message of another user*/ 
                 
           webSocketRef.current.send(JSON.stringify(new WebSocketMessage("see_msg", message)))
+          
           setChats([...chatsRef.current.map((chat)=>
           {
                   
@@ -207,6 +208,9 @@ function App() {
                 </div>)
             
               })}
+            <button className='new-chat-button'>
+              <FontAwesomeIcon icon={faPlus} />
+            </button>
             
             
         </div>

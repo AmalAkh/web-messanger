@@ -1,5 +1,6 @@
-@import "vars.scss";
-@import "fonts.scss";
+@use "vars" as *;
+@use "fonts" as *;
+
 #root, body, html
 {
     height: 100%;
@@ -71,4 +72,8 @@ button
         color: $link-blue;
         background-color: transparent;
     }
+}
+@mixin shadow($x:0px, $y:2px, $blur:8px, $spread:-6px)
+{
+    box-shadow:$x $y $blur $spread #616161;
 }
