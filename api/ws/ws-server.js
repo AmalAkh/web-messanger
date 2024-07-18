@@ -25,8 +25,11 @@ wss.on("connection", (ws, req, userId)=>
     {
         connections[userId] = [ws];
     } 
+    setStatus(userId, "online");
     ws.on("close", ()=>
     {
+        let date = new Date();
+        setStatus(userId, `${date.getUTCFullYear()}.${date.getUTCMonth()+1}.${date.getUTCDate()} ${date.getUTCHours()}:${date.getUTCMinutes() >=10 ? date.getUTCMinutes() : "0"+date.getUTCMinutes()}`);
         if(connections[userId] != undefined)
         {
             connections[userId].splice(connections[userId].indexOf(ws),0);
@@ -98,6 +101,16 @@ async function seeMessage(senderId,messageId)
         {
             seeMessage(senderId, messageId);
         }, 1000);
+    }
+}
+
+async function setStatus(userId, status)
+{
+    const [rows, _] = await pool.execute("SELECT IF(user1id = ?, user2id, user1id) as companionId FROM chats WHERE user1id = ? OR user2id = ? ", [userId,userId,userId ]);
+    await pool.execute("UPDATE users SET status=? WHERE id = ?", [status, userId]);
+    for(let row of rows)
+    {
+        sendMessageToAll(row.companionId, {type:"status-change",data:{status:status}});
     }
 }
 /** Sends message through websocket to all connected sockets associated with user id 

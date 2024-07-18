@@ -35,6 +35,8 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
   };
   const [messageText, setMessageText] = useState("");
 
+  const [currentUserStatus, setCurrentUserStatus] = useState("offline");
+
   const navigate = useNavigate();
 
   
@@ -55,11 +57,32 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
     {
       seeMessage(message.id);
     })
+    eventBus.addEventListener("status-change", (status)=>
+    {
+      setUserStatus(status);
+    })
       
       
     
   },[]);
-  
+  function setUserStatus(status)
+  {
+    if(status != "online")
+      {
+        let statusDate = createDateWithOffset(status);
+        let date = new Date();
+        if(statusDate.getDate() == date.getDate() && statusDate.getMonth() == date.getMonth() && statusDate.getFullYear() == date.getFullYear())
+        {
+          setCurrentUserStatus(`Last seen at ${statusDate.getHours()}:${statusDate.getMinutes() >=10 ? statusDate.getMinutes() : "0"+ statusDate.getMinutes() }`)
+        }else
+        {
+          setCurrentUserStatus(`Last seen on ${status}`);
+        }
+        
+        return;
+      }
+      setCurrentUserStatus(status);
+  }
   function addNewMessage(newMessage)
   {
     
@@ -104,6 +127,11 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
         {
           navigate("/login");
         })
+      axios.get(`http://localhost:8000/users/${userId}/status`,{headers:{'Authorization':localStorage.getItem("jwt")}}).then((res)=>
+      {
+        setUserStatus(res.data);
+      });
+      
     }
 
   },[chatId]);
@@ -128,7 +156,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
             <img src="" className='avatar-img'/>
             <div>
               <p>{userName}</p>
-              <p className='user-status'>online</p>
+              <p className={`user-status ${currentUserStatus == "online" && 'online'}`}>{currentUserStatus}</p>
               
               
               

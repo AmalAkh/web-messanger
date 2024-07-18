@@ -4,5 +4,8 @@
     color:$dark-gray;
     font-size: 0.75rem;
     font-family: "Physis-Light";
-
+    &.online
+    {
+        color:$link-blue;
+    }
 }

@@ -43,7 +43,7 @@ router.post("/new",jsonParser, async (req, res)=>
     
     try
     {
-        await pool.query("INSERT INTO users VALUES(?, ?, ?, ?, ?, DEFAULT)", [req.body.name, req.body.nickname, req.body.email, hashed_password, v4()]);
+        await pool.query("INSERT INTO users VALUES(?, ?, ?, ?, ?, DEFAULT, DEFAULT)", [req.body.name, req.body.nickname, req.body.email, hashed_password, v4()]);
         res.sendStatus(200);
    
         
@@ -134,6 +134,19 @@ router.delete("/remove",authorizationMiddleware, async (req, res)=>
     }
     
     return;
+});
+
+router.get("/:id/status/",authorizationMiddleware, async (req,res)=>
+{
+    const pool = setupDBConnection();
+
+    const [rows, _] = await pool.query("SELECT status FROM users WHERE id = ?", [req.params.id]);
+    if(rows.length !=0)
+    {
+        res.send(rows[0].status);
+        return;
+    }
+    res.send(new ApiError("user_not_found", "User was not found", "User was not found"));
 });
 
 module.exports = router;

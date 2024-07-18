@@ -56,7 +56,7 @@ function App() {
     
       getChats().then(async (chatsRes)=>
       {
-        let chat = new Chat("test", "", "userdidi", []);
+        //let chat = new Chat("test", "", "userdidi", []);
         setChats([...chatsRes.data]);
         
         await setupWebSocketConnection();
@@ -84,6 +84,7 @@ function App() {
 
           webSocketRef.current.send(JSON.stringify(new WebSocketMessage("new_msg", message)));
         })
+        
 
         webSocketRef.current.addEventListener("message",(websocketMessage)=>
         {
@@ -113,6 +114,10 @@ function App() {
             {
               /**In case somebody has seen our message */
               eventBus.emit("see-local-message", message.data);
+            }else if(message.type == "status-change")
+            {
+              
+              eventBus.emit("status-change", message.data.status);
             }
           })
           
