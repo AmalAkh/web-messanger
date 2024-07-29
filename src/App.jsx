@@ -17,7 +17,10 @@ import getWebSocketTicket from './api/http/get-websocket-ticket';
 
 import eventBus from './utils/event-bus';
 import WebSocketMessage from './abstractions/websocket-message';
-import getImage from './api/http/get-image';
+import getAvatar from './api/http/get-avatar';
+import getUserInfo from './api/http/get-user-info';
+
+import loading from './assets/loading.gif'
 
 function App() {
   
@@ -37,14 +40,17 @@ function App() {
   }
   const [text, setText] = useState("");
 
-  const [isVisible, setIsVisible] = useState(false);
+  
+  const [isUserEditInfoModalVisible, setIsUserEditInfoModalVisible] = useState(false);
+
   
 
   const chatsRef = useRef([]);
   
-  
   const webSocketRef = useRef(null);
-
+  const [userInfo, setUserInfo] = useState({}); 
+  const userInfoCacheRef = useRef({});
+  
 
   const navigate = useNavigate();
 
@@ -53,11 +59,16 @@ function App() {
   {
     
     
-
+      getUserInfo().then((res)=>
+      {
+        
+        setUserInfo({...res.data, avatar:res.data.avatar});
+        
+      });
     
       getChats().then(async (chatsRes)=>
       {
-        //let chat = new Chat("test", "", "userdidi", []);
+       
         setChats([...chatsRes.data]);
         
         await setupWebSocketConnection();
@@ -182,6 +193,73 @@ function App() {
     setCurrentChat(chat);
     
   }
+  function showUserEditInfoModal()
+  {
+    setIsUserEditInfoModalVisible(true);
+    userInfoCacheRef.current = {...userInfo};
+  }
+  function hideUserEditInfoModal()
+  {
+    setIsUserEditInfoModalVisible(false);
+    setUserInfo({...userInfoCacheRef.current});
+  }
+  function removeAvatar()
+  {
+    setUserInfo({...userInfo, avatar:null});
+    avatarFileRef.current = null;
+
+  }
+  function saveUserInfo()
+  {
+
+    let formData = new FormData();
+    
+    formData.append("name", userInfo.name);
+    formData.append("nickname", userInfo.nickname);
+    
+
+    if(!avatarFileRef.current && !userInfo.avatar)
+    {
+      formData.append("removeAvatar", true);
+      formData.append("avatar", null);
+    }else if(avatarFileRef.current)
+    {
+      formData.append("avatar", avatarFileRef.current);
+    }
+    else
+    {
+      formData.append("avatar", null);
+    }
+    
+    
+    axios.put("http://localhost:8000/users/info/update", formData, {headers:{'Authorization':localStorage.getItem("jwt")}}).then((res)=>
+    {
+      if(res.data)
+      {
+        setUserInfo({...userInfo, avatar:res.data})
+      }
+      
+      setIsUserEditInfoModalVisible(false);
+      avatarFileRef.current = null;
+    })
+  }
+  const avatarFileRef = useRef(null);
+  async function changeAvatar(e)
+  {
+    if(e.target.files[0])
+    {
+      let reader = new FileReader();
+      avatarFileRef.current = e.target.files[0];
+      reader.onload = ()=>
+      {
+        setUserInfo({...userInfo, avatar:reader.result});
+      }
+      reader.readAsDataURL(e.target.files[0]);
+      
+    }
+  }
+
+  
   
   
   
@@ -191,17 +269,19 @@ function App() {
       <main>
         <div className='chats-list'>
             <div className="my-profile">
-              <img className='avatar-img' src={getImage(undefined)}/>
+              <img className='avatar-img' src={getAvatar(userInfo.avatar)}/>
               <div className='add-info'>
-                <h3>John Johnson</h3>
-                <button className='link' onClick={()=>{setIsVisible(true)}}>Change</button>
-
+                <h3>{userInfo.name}</h3>
+                <p className='nickname'>@{userInfo.nickname}</p>
+                
               </div>
+              <button className='link' onClick={showUserEditInfoModal}>Change</button>
+
             </div>
             {chats.map((chat)=>
               {
                 return (<div className={`chat-item ${currentChat.id == chat.id ? 'selected':''}`} onClick={()=>{selectChat(chat)}} key={chat.id}>
-                <img src={getImage(null)} className='avatar-img'/>
+                <img src={getAvatar(chat.avatar)} className='avatar-img'/>
                 <div className='text-block'>
                   <p>{chat.userName}</p>
                   <p className='last-message'>{chat.lastMessageText}</p>
@@ -220,11 +300,32 @@ function App() {
             
             
         </div>
-        <ChatView userName={currentChat.userName} chatId={currentChat.id} userId={currentChat.userId}></ChatView>
-        <ModalWindow title="Test" isVisible={isVisible} onClose={()=>setIsVisible(false)} >
+        <ChatView userName={currentChat.userName} userAvatar={currentChat.avatar} chatId={currentChat.id} userId={currentChat.userId}></ChatView>
+        <ModalWindow title="Edit your data" isVisible={isUserEditInfoModalVisible} onClose={hideUserEditInfoModal}  id="edit-user-info-modal">
 
-          <div><button onClick={()=>setText(text+"a")}>test</button></div>
+            
+              
+              
+             
+            <img className='avatar-img' src={getAvatar(userInfo.avatar)}/>
+            
+              
+              
+            
+            <label className='file-upload-button' for="avatar-file-upload" >
+              Change
+            </label>
+            <input type='file' id="avatar-file-upload" onChange={changeAvatar} />
+            {userInfo.avatar && <button className='remove-button' onClick={removeAvatar}>Remove image</button>}
+            <h5>Name</h5>
+            <input type='text' defaultValue={userInfo.name} onInput={(e)=>{setUserInfo({...userInfo, name:e.target.value})}}/>
+            <h5>Nickname</h5>
+            <input type='text' defaultValue={userInfo.nickname} onInput={(e)=>{setUserInfo({...userInfo, nickname:e.target.value})}}/>
+
+            <button onClick={saveUserInfo}>Save changes</button>
+          
         </ModalWindow>
+        
       </main>
     </>
   )

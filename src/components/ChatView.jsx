@@ -1,6 +1,7 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faPaperPlane, faPlus } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from "react-router-dom";
+import ModalWindow from './ModalWindow';
 
 import axios from 'axios';
 
@@ -14,7 +15,9 @@ import WebSocketMessage from '../abstractions/websocket-message';
 import eventBus from '../utils/event-bus';
 import createDateWithOffset from '../utils/create-date-with-offset';
 import "./../scss/ChatView.scss";
-import getImage from '../api/http/get-image';
+import getImage from '../api/http/get-avatar';
+import getUserInfo from '../api/http/get-user-info';
+import getAvatar from '../api/http/get-avatar';
 
 
 
@@ -158,11 +161,27 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
       
     }
   }
+  const [isUserInfoModalVisible, setIsUserInfoModalVisible] = useState(false);
+
+  const [userInfo, setUserInfo] = useState({});
+  function hideUserInfoModal()
+  {
+    setIsUserInfoModalVisible(false);
+  }
+  async function showUserInfoModal()
+  {
+    let info = await getUserInfo(userId);
+
+    setUserInfo({...info.data})
+    
+    setIsUserInfoModalVisible(true);
+  }
+  
 
     return <>
     <div className='chat'>
-          <div className='top-bar'>
-            <img src={getImage(undefined)} className='avatar-img'/>
+          <div className='top-bar' onClick={showUserInfoModal} >
+            <img src={getImage(userAvatar)} className='avatar-img'/>
             <div>
               <p>{userName}</p>
               <p className={`user-status ${currentUserStatus == "online" && 'online'}`}>{currentUserStatus}</p>
@@ -178,7 +197,22 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
             <button className='clear send-btn' onClick={sendMessage}><FontAwesomeIcon icon={faPaperPlane} /> </button>
           
           </div>
+          <ModalWindow title={userInfo.name} isVisible={isUserInfoModalVisible} onClose={hideUserInfoModal}  id="user-info-modal">
+             
+            <img className='avatar-img' src={getAvatar(userInfo.avatar)}/>  
+            <div className='info-block'>
+              <small>Name</small>
+              <p>@{userInfo.name}</p>
+            </div>
+            <div className='info-block'>
+              <small>Nickname</small>
+              <p>@{userInfo.nickname}</p>
+            </div>
 
+            <button className='remove-button'>Remove chat with this user</button>
+            
+
+          </ModalWindow>
         </div>
     </>
 }

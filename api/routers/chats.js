@@ -47,7 +47,7 @@ router.get("/",authorizationMiddleware, async(req,res)=>
 {
        
         console.log(res.locals.userId);
-        const [rows, _] = await pool.query("SELECT  id,id as currentChatId, IF(user1id = ?, user2id, user1id) AS userId, (SELECT name FROM users WHERE id = userId) as userName, (SELECT COUNT(*) FROM messages WHERE chatid=currentChatId AND seen=0 AND userid!=?) as unseenMessagesCount, (SELECT text FROM messages WHERE chatid=currentChatId ORDER BY date DESC LIMIT 1 ) as lastMessageText FROM chats  WHERE (user1id = ? OR user2id = ?)",[res.locals.userId,res.locals.userId, res.locals.userId,res.locals.userId]);
+        const [rows, _] = await pool.query("SELECT  id,id as currentChatId, IF(user1id = ?, user2id, user1id) AS userId, (SELECT avatar FROM users WHERE id=userId) as avatar, (SELECT name FROM users WHERE id = userId) as userName, (SELECT COUNT(*) FROM messages WHERE chatid=currentChatId AND seen=0 AND userid!=?) as unseenMessagesCount, (SELECT text FROM messages WHERE chatid=currentChatId ORDER BY date DESC LIMIT 1 ) as lastMessageText FROM chats  WHERE (user1id = ? OR user2id = ?)",[res.locals.userId,res.locals.userId, res.locals.userId,res.locals.userId]);
         
         res.send(rows);
         

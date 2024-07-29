@@ -10,7 +10,7 @@ main
 .chats-list
 {
     flex:2;
-    z-index: 9;
+    z-index: 1;
     box-shadow: 2px 0px 2px -1px #ececec;
     overflow: hidden;
     background-color: $main-color;
@@ -42,50 +42,7 @@ main
     
 
 }
-.chat
-{
-    flex:6;
-    display: flex;
-    flex-direction: column;
-    z-index: 1;
-    
-    
-    .top-bar
-    {
-        
-       
-        background-color: $main-color;
-        padding: 0.25rem;
-        padding-left: 0.5rem;
-        display: flex;
-        align-items: center;
-        
-        @include shadow($blur:7px);
-        z-index: 8;
-        p
-        {
-            margin-left: 10px;
-        }
-    }
-    .bottom-bar
-    {
-        background-color: $main-color;
-        padding: 0.3rem;
-        display: flex;
-        align-items: center;
-        padding-bottom: 20px;
-        button
-        {
-            margin: 2px;
-            padding: 10px;
-            svg{ font-size: 1rem;}
 
-        }
-        
-        
-    }
-    
-}
 
 .avatar-img
 {
@@ -102,17 +59,27 @@ main
     display: flex;
     align-items: center;
     @include shadow($blur:5px, $x:0px, $spread:-5px);
-
+    .avatar-img
+    {
+        width:2.5rem;
+        height:2.5rem;
+    }
     .add-info
     {
         padding: 4px;
-        display: flex;
+        
         align-items: center;
-        justify-content: start    ;
+        justify-content: start;
         flex: auto;
+        
         h3
         {
             flex:auto;
+        }
+        .nickname
+        {
+            color:$link-blue;
+            font-size: 0.8rem;
         }
         
     }
@@ -189,5 +156,55 @@ main
     &.selected
     {
         background-color: $light-gray;
+    }
+}
+#edit-user-info-modal
+{
+    .modal-window-body
+    {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+    }
+    input
+    {
+        margin-bottom: 10px;
+    }
+    .avatar-img
+    {
+        width: 8rem;
+        height: 8rem;
+        align-self: center;
+       
+       
+    }
+    .file-upload-button
+    {
+        text-align: center;
+        background-color: $light-gray;
+        width: 30%;
+        align-self: center;
+        margin-top: 10px;
+        padding: 4px;
+        border-radius: 10px;
+        font-family: "Physis-Medium";
+        font-size: 0.85rem;
+        cursor: pointer;
+        & + input[type='file']
+        {
+            display: none;
+        }
+    }
+
+    h5
+    {
+        margin-bottom: 8px;
+    }
+    .remove-button
+    {
+        padding:4px;
+        width: 30%;
+        margin-top: 10px;
+        align-self: center;
     }
 }

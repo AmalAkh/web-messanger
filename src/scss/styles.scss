@@ -26,6 +26,11 @@ p
     font-family: "Physis-Medium";
 
 }
+small
+{
+    margin: 0px;
+    font-family: "Physis-Medium";
+}
 @for $i from 1 to 6
 {
     h#{$i}
@@ -71,6 +76,11 @@ button
     {
         color: $link-blue;
         background-color: transparent;
+    }
+    &.remove-button
+    {
+        color:$red;
+        border:2px solid $red;
     }
 }
 @mixin shadow($x:0px, $y:2px, $blur:8px, $spread:-6px)
