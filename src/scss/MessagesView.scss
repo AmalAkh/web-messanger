@@ -186,3 +186,24 @@
     
 
 }
+.loading-indicator
+{
+    text-align: center;
+    margin: 10px;
+    animation: loading-indicator-anim infinite;
+    animation-duration: 1s;
+    
+}
+
+@keyframes loading-indicator-anim
+{
+    from
+    {
+        opacity: 0;
+        
+    }
+    to
+    {
+        opacity: 1;
+    }
+}

@@ -74,9 +74,14 @@ export default function MessageView({messages=[],userId})
         
     }, [messages])
     
-
+    const [isLoadingIndicatorVisible, setIsLoadingIndicatorVisible] = useState(false);
     function onMessagesScroll(e)
     {
+
+        if( messageView.current.scrollTop == 0)
+        {
+            setIsLoadingIndicatorVisible(true);
+        }
         previousScrollTop.current = messageView.current.scrollTop;
         for(let el of document.querySelectorAll(".grouped-messages-container p.date"))
         {
@@ -134,20 +139,20 @@ export default function MessageView({messages=[],userId})
     },[])
     return <>
     <div className="messages-view" onScroll={onMessagesScroll} ref={messageView}>
-        
-        
-    <div className="date-label"><p>{currentDate}</p></div>
 
-    {Object.keys(groupedMessages).map((date, index)=>
-    {
-        return <div className="grouped-messages-container" key={date+index.toString()}>
-            <p className="date">{date}</p>
-            { groupedMessages[date].map((message)=>
-            {
-                return <div id={message.id}><Message key={message.id} text={message.text} date={message.date} isLocal={message.isLocal} seen={message.seen}></Message></div>
-            })}
-        </div>
-    })}
+        {isLoadingIndicatorVisible &&  <p className="loading-indicator">Loading</p>}
+        <div className="date-label"><p>{currentDate}</p></div>
+
+        {Object.keys(groupedMessages).map((date, index)=>
+        {
+            return <div className="grouped-messages-container" key={date+index.toString()}>
+                <p className="date">{date}</p>
+                { groupedMessages[date].map((message)=>
+                {
+                    return <div id={message.id}><Message key={message.id} text={message.text} date={message.date} isLocal={message.isLocal} seen={message.seen}></Message></div>
+                })}
+            </div>
+        })}
        
 
         
