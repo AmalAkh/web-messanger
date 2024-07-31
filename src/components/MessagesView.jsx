@@ -40,8 +40,8 @@ export default function MessageView({messages=[],userId})
             {
                 if(!msg.seen && !msg.isLocal)
                 {
-                    
-                    eventBus.emit("see-nonlocal-message", {id:msg.id});
+                    debugger;
+                    eventBus.emit("see-nonlocal-message", {id:msg.id,senderId:userId});
                     
                     
                 }
