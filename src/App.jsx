@@ -21,6 +21,8 @@ import getAvatar from './api/http/get-avatar';
 import getUserInfo from './api/http/get-user-info';
 
 import loading from './assets/loading.gif'
+import createDateWithOffset from './utils/create-date-with-offset';
+import sortChats from './utils/sort-chats';
 
 function App() {
   
@@ -33,8 +35,10 @@ function App() {
   }
 
   const [chats, _setChats] = useState([]);
+  const chatsRef = useRef([]);
   function setChats(newChats)
   {
+    newChats = sortChats(newChats)
     _setChats(newChats);
     chatsRef.current = newChats;
   }
@@ -45,7 +49,7 @@ function App() {
 
   
 
-  const chatsRef = useRef([]);
+  
   
   const webSocketRef = useRef(null);
   const [userInfo, setUserInfo] = useState({}); 
@@ -68,8 +72,12 @@ function App() {
     
       getChats().then(async (chatsRes)=>
       {
-       
-        setChats([...chatsRes.data]);
+        console.log(chatsRes.data);
+        setChats([...chatsRes.data.map((chat)=>
+          {
+            return {...chat, lastMessageDate:createDateWithOffset(chat.lastMessageDate), date:createDateWithOffset(chat.date)}
+          })]);
+        
         
         await setupWebSocketConnection();
         console.log("connection setup");
@@ -95,6 +103,7 @@ function App() {
         {
 
           webSocketRef.current.send(JSON.stringify(new WebSocketMessage("new_msg", message)));
+          
         })
         
 
@@ -116,9 +125,10 @@ function App() {
                 {
                   if(!message.data.isLocal)
                   {
-                    return {...chat, unseenMessagesCount:chat.unseenMessagesCount+1}
+                    
+                    return {...chat, unseenMessagesCount:chat.unseenMessagesCount+1,lastMessageText:message.data.text, lastMessageDate:new Date()}
                   }
-                  return {...chat, lastMessageText:message.data.text}
+                  return {...chat, lastMessageText:message.data.text,lastMessageDate:new Date()}
                 }
                 return chat;
               })])
