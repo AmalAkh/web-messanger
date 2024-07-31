@@ -123,10 +123,11 @@ export default function MessageView({messages=[],userId})
     
         eventBus.addEventListener("new-message",(message)=>
         {
-            if(message.isLocal)
+            if(message.isLocal || (!message.isLocal && messageView.current.scrollTop+messageView.current.clientHeight >= messageView.current.scrollHeight -50 ))
             {
-                
+               // console.log(messageView.current.scrollHeight);
                 scrollToEnd.current = true;
+                console.log("needs to scroll");
             }
             
         })
