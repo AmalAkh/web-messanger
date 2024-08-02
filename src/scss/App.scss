@@ -51,6 +51,9 @@ main
     height:2.2rem;
     overflow: hidden;
     border-radius: 50%;
+    @include shadow($y:2px,$blur:10px);
+
+    background-color: $light-gray;
 }
 .my-profile
 {
@@ -98,10 +101,8 @@ main
     padding: 10px;
     cursor: pointer;
     border-bottom: 1px solid $light-gray;
-    &:hover
-    {
-        background-color: $light-gray;
-    }
+    transition: background-color 0.15s;
+    
     img
     {
         min-height: 50px;
@@ -122,10 +123,17 @@ main
                 font-size: 0.75rem;
                 border-radius: $border-radius;
                 font-family: "Physis-Light";
-                max-height: 3ch;
+                max-height: 2ch;
                 
                 
                 color:$dark-gray;
+                background-color: $light-gray;
+                float: left;
+            
+                padding: 2px;
+                padding-left: 8px;
+                padding-right: 8px;
+                border-radius: 7px;
                 
               
                
@@ -152,10 +160,15 @@ main
             color:$main-color;
         }
     }
-    
-    &.selected
+    &:hover
     {
         background-color: $light-gray;
+    }
+    &.selected
+    {
+        
+        background-color: $light-blue;
+
     }
 }
 #edit-user-info-modal

@@ -26,7 +26,7 @@
         padding-left: 0.5rem;
         display: flex;
         align-items: center;
-        
+        z-index:3;
         @include shadow($blur:7px);
         cursor: pointer;
        
@@ -42,6 +42,7 @@
         display: flex;
         align-items: center;
         padding-bottom: 20px;
+        @include shadow($y:0px,$blur:7px);
         button
         {
             margin: 2px;

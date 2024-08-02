@@ -321,7 +321,7 @@ function App() {
                 <img src={getAvatar(chat.avatar)} className='avatar-img'/>
                 <div className='text-block'>
                   <p>{chat.userName}</p>
-                  <p className='last-message'>{chat.lastMessageText}</p>
+                  {chat.lastMessageText &&<p className='last-message'>{chat.lastMessageText}</p>}
                   
                 </div>
                 {chat.unseenMessagesCount > 0 && <div className='unseen-messages-counter'>
