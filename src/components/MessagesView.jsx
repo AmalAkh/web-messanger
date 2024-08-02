@@ -13,7 +13,7 @@ import eventBus from "../utils/event-bus";
 */
 
 
-export default function MessageView({messages=[],userId})
+export default function MessageView({messages=[],userId, allMessagesLoaded=false})
 {
     
     const [currentDate, setCurrentDate] = useState("");//current date for sticky label
@@ -21,7 +21,7 @@ export default function MessageView({messages=[],userId})
     let groupedMessages = groupByDate(messages);
     
     
-
+    const prevMessagesCount = useRef(0)
     
     const messageView = useRef(null);
 
@@ -32,6 +32,24 @@ export default function MessageView({messages=[],userId})
     const previousScrollTop = useRef(-1);
     useEffect(()=>
     {
+        
+        if(isLoadingIndicatorVisible)
+        {
+            setIsLoadingIndicatorVisible(false);
+            console.log('scrolled');
+            
+            let elementIndex = messages.length - prevMessagesCount.current-1;
+            if(elementIndex < 0)
+            {
+                elementIndex = 0;
+            }
+            
+            messageView.current.scroll({left:0, top:document.getElementById(messages[elementIndex].id).offsetTop+10, behavior:"instant"});
+            prevMessagesCount.current = messages.length;
+            
+            return;
+            
+        }
         /** in case we dont have scrolling we have to set seen=true for all messages because we see all them at once */
         if(messageView.current.scrollHeight <= messageView.current.clientHeight)
         {
@@ -40,7 +58,7 @@ export default function MessageView({messages=[],userId})
             {
                 if(!msg.seen && !msg.isLocal)
                 {
-                    debugger;
+                    
                     eventBus.emit("see-nonlocal-message", {id:msg.id,senderId:userId});
                     
                     
@@ -71,16 +89,31 @@ export default function MessageView({messages=[],userId})
                 scrollToEnd.current = false;
             },10);
         }
+       
+        prevMessagesCount.current = messages.length;
+        console.log(prevMessagesCount.current)
+        
         
     }, [messages])
+    /**hide loading indicator in case we had loaded all messages*/
+    useEffect(()=>
+    {
+        setIsLoadingIndicatorVisible(false);
+    },[allMessagesLoaded])
     
     const [isLoadingIndicatorVisible, setIsLoadingIndicatorVisible] = useState(false);
     function onMessagesScroll(e)
     {
+        /**request new portion of messages*/
 
-        if( messageView.current.scrollTop == 0)
+        if( messageView.current.scrollTop == 0 && !allMessagesLoaded)
         {
+        
+            
             setIsLoadingIndicatorVisible(true);
+            
+            eventBus.emit("load-more-messages");
+            
         }
         previousScrollTop.current = messageView.current.scrollTop;
         for(let el of document.querySelectorAll(".grouped-messages-container p.date"))

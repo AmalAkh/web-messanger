@@ -18,6 +18,7 @@ import "./../scss/ChatView.scss";
 import getImage from '../api/http/get-avatar';
 import getUserInfo from '../api/http/get-user-info';
 import getAvatar from '../api/http/get-avatar';
+import getMessages from '../api/http/get-messages';
 
 
 
@@ -42,6 +43,9 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
   const [messageText, setMessageText] = useState("");
 
   const [currentUserStatus, setCurrentUserStatus] = useState("offline");
+
+  const messagesOffsetRef = useRef(0);
+  const [allMessagesLoaded, setAllMessageLoaded] = useState(false);
 
   const navigate = useNavigate();
 
@@ -73,6 +77,31 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
       }
       
     })
+    /** retrieve more messages */
+    eventBus.addEventListener("load-more-messages", ()=>
+    {
+        messagesOffsetRef.current+=20;
+
+        getMessages(chatIdRef.current, messagesOffsetRef.current).then((res)=>
+        {
+          
+          if(res.data.length > 0)
+          {
+            setMessages([...res.data.map((message)=>
+              {
+                
+                return {...message, date:createDateWithOffset(message.date)};
+              }), ...messagesRef.current]);
+            
+          }else
+          {
+            
+            setAllMessageLoaded(true);
+            
+          }
+        });
+        
+    })
       
       
     
@@ -80,7 +109,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
   function setUserStatus(status)
   {
     if(status != "online")
-      {
+    {
         let statusDate = createDateWithOffset(status);
         let date = new Date();
         if(statusDate.getDate() == date.getDate() && statusDate.getMonth() == date.getMonth() && statusDate.getFullYear() == date.getFullYear())
@@ -92,7 +121,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
         }
         
         return;
-      }
+    }
       setCurrentUserStatus(status);
   }
   function addNewMessage(newMessage)
@@ -100,7 +129,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
     
     if(chatIdRef.current == newMessage.chatId)
     {
-     
+      messagesOffsetRef.current++;
       setMessages([...messagesRef.current, {...newMessage,date:createDateWithOffset(newMessage.date) }])
     }
     
@@ -127,7 +156,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
     if(chatId != "")
     {
       
-      axios.get(`http://localhost:8000/chats/${chatId}/messages/0`,{headers:{'Authorization':localStorage.getItem("jwt")}}).then((res)=>
+      getMessages(chatId).then((res)=>
         {
           setMessages(res.data.map((message)=>
           {
@@ -190,7 +219,7 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
               
             </div>
           </div>
-          <MessageView userId={userId} messages={messages} scrollToEnd={scrollToEnd} ></MessageView>
+          <MessageView userId={userId} messages={messages} allMessagesLoaded={allMessagesLoaded} ></MessageView>
           <div className="bottom-bar">
             {/*<button className='clear attach-btn'><FontAwesomeIcon icon={faPlus} /> </button>*/}
             <AutoSizeTextArea placeholder='Message' value={messageText} onInput={(e)=>setMessageText(e.target.value)}></AutoSizeTextArea>
