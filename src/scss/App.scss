@@ -208,3 +208,31 @@ main
         align-self: center;
     }
 }
+#new-chat-modal
+{
+    .modal-window
+    {
+        align-self: flex-start;
+        margin-top: 10%;
+    }
+    .modal-window-body
+    {
+        display: flex;
+        flex-wrap: wrap;
+        padding: 10px;
+        padding-bottom: 16px;
+        input
+        {
+            flex-grow: 2;
+            
+        }
+        button
+        {
+            margin-left: 10px;
+        }
+        .error-msg
+        {
+            flex-grow: 10;
+        }
+    }
+}

@@ -19,6 +19,7 @@ import eventBus from './utils/event-bus';
 import WebSocketMessage from './abstractions/websocket-message';
 import getAvatar from './api/http/get-avatar';
 import getUserInfo from './api/http/get-user-info';
+import createNewChat from './api/http/create-new-chat';
 
 import loading from './assets/loading.gif'
 import createDateWithOffset from './utils/create-date-with-offset';
@@ -268,8 +269,34 @@ function App() {
       
     }
   }
+  const [isNewChatModalVisible, setIsNewChatModalVisible] = useState(false);
+  const [nicknameForNewChat, setNicknameForNewChat] = useState("");
+  const [newChatErrorMessage, setNewChatErrorMessage] = useState("");
 
-  
+  function startNewChat()
+  {
+      setNewChatErrorMessage("");
+      createNewChat(nicknameForNewChat.trim().replaceAll("@", "")).then((res)=>
+      {
+        let newChat = new Chat(res.data.name, res.data.avatar, res.data.id, res.data.userId, []);
+        newChat.date = new Date();
+        setChats([...chats,newChat]);
+        selectChat(newChat);
+        setNewChatErrorMessage("");
+        setNicknameForNewChat("");
+        setIsNewChatModalVisible(false);
+      }).catch((err)=>
+      {
+          console.log(err);
+          setNewChatErrorMessage(err.response.data.clientMessage);
+      });
+  }
+  function closeNewChatModal()
+  {
+    setNewChatErrorMessage("");
+    setNicknameForNewChat("");
+    setIsNewChatModalVisible(false);
+  }
   
   
   
@@ -304,7 +331,7 @@ function App() {
                 </div>)
             
               })}
-            <button className='new-chat-button'>
+            <button className='new-chat-button' onClick={()=>setIsNewChatModalVisible(true)}>
               <FontAwesomeIcon icon={faPlus} />
             </button>
             
@@ -334,7 +361,13 @@ function App() {
 
             <button onClick={saveUserInfo}>Save changes</button>
           
-        </ModalWindow>
+       </ModalWindow>
+       <ModalWindow title="New chat" isVisible={isNewChatModalVisible} onClose={closeNewChatModal} id="new-chat-modal">
+          <input type='text' placeholder='@nickname'  value={nicknameForNewChat} onInput={(e)=>setNicknameForNewChat(e.target.value)}/>
+          
+          <button onClick={startNewChat}>New chat</button>
+          {newChatErrorMessage != "" &&<p className='error-msg'>{newChatErrorMessage}</p>}
+       </ModalWindow>
         
       </main>
     </>

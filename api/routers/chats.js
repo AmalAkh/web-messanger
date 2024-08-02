@@ -18,7 +18,7 @@ router.post("/new",authorizationMiddleware, jsonParser, async(req,res)=>
     const chatId = v4();
 
 
-    const userExistRequestResult = await  pool.query("SELECT id FROM users WHERE nickname = ?", [req.body.nickname]);
+    const userExistRequestResult = await  pool.query("SELECT name,avatar, id FROM users WHERE nickname = ?", [req.body.nickname]);
     if(userExistRequestResult[0].length == 0)
     {
         res.statusCode = 400;
@@ -27,12 +27,18 @@ router.post("/new",authorizationMiddleware, jsonParser, async(req,res)=>
         return;
     }
     let secondUserId = userExistRequestResult[0][0].id;
+    if(secondUserId == res.locals.userId)
+    {
+        res.statusCode = 400;
+        res.send(new ApiError("chat_with_yourself", "You cannot create chat with your self",  "You cannot create chat with your self"))
+        return;
+    }
     const chatExistRequestResult = await  pool.query("SELECT EXISTS(SELECT id FROM chats WHERE (user1id = ? AND user2id = ?) OR (user1id = ? AND user2id = ?)) AS exts", [res.locals.userId, secondUserId,secondUserId,res.locals.userId]);
     if(chatExistRequestResult[0][0].exts == 1)
     {
         res.statusCode = 400;
         res.append("Content-Type", "application/json");
-        res.send(new ApiError("chat_already_not_exist", "Chat with this user already exists",  "Chat with this user already exists"));
+        res.send(new ApiError("chat_already_exist", "Chat with this user already exists",  "Chat with this user already exists"));
         return;
     }
 
@@ -41,7 +47,7 @@ router.post("/new",authorizationMiddleware, jsonParser, async(req,res)=>
 
 
     res.append("Content-Type", "text/plain");
-    res.send(chatId);
+    res.send({name:userExistRequestResult[0][0].name, nickname:req.body.nickname, avatar:userExistRequestResult[0][0].avatar,userId:secondUserId,id:chatId});
 })
 router.get("/",authorizationMiddleware, async(req,res)=>
 {
