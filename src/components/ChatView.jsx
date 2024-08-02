@@ -23,7 +23,7 @@ import getMessages from '../api/http/get-messages';
 
 
 
-export default function ChatView({userName,userAvatar,userId,chatId,onSeeMessage=()=>{}})
+export default function ChatView({userName,userAvatar,userId,chatId})
 {
 
   const chatIdRef = useRef(chatId);
@@ -33,7 +33,7 @@ export default function ChatView({userName,userAvatar,userId,chatId,onSeeMessage
   const [messages, _setMessages] = useState([]);
   const messagesRef = useRef([]);
 
-  const eventListenerSet  = useRef(false);
+
 
   let setMessages = (data)=>
   {

@@ -43,7 +43,7 @@ function App() {
     _setChats(newChats);
     chatsRef.current = newChats;
   }
-  const [text, setText] = useState("");
+  
 
   
   const [isUserEditInfoModalVisible, setIsUserEditInfoModalVisible] = useState(false);
@@ -81,7 +81,7 @@ function App() {
         
         
         await setupWebSocketConnection();
-        console.log("connection setup");
+        
         eventBus.addEventListener("see-nonlocal-message",(message)=>
         {
           //* In case we have seen message of another user*/ 
@@ -146,7 +146,7 @@ function App() {
           
       }).catch((err)=>
       {
-        console.log(err);
+       
         navigate("/login");
       })
 
