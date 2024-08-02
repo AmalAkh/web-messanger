@@ -15,7 +15,10 @@
     flex:6;
     display: flex;
     flex-direction: column;
-  
+    &.hidden
+    {
+        opacity: 0;
+    }
     
     .top-bar
     {

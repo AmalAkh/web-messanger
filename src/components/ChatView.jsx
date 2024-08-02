@@ -23,7 +23,7 @@ import getMessages from '../api/http/get-messages';
 
 
 
-export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMessage=()=>{}})
+export default function ChatView({userName,userAvatar,userId,chatId,onSeeMessage=()=>{}})
 {
 
   const chatIdRef = useRef(chatId);
@@ -205,10 +205,10 @@ export default function ChatView({userName,userAvatar,userId,chatId="",onSeeMess
     
     setIsUserInfoModalVisible(true);
   }
-  
+    
 
     return <>
-    <div className='chat'>
+    <div className={`chat ${!chatId ? 'hidden': ''}`}>
           <div className='top-bar' onClick={showUserInfoModal} >
             <img src={getImage(userAvatar)} className='avatar-img'/>
             <div>
