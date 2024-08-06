@@ -6,14 +6,8 @@
     
     font-size: 0.8rem;
     resize:none;
-    height: 4ch;
-    @for $i from 1 through 6
-    {
-        &.size-#{$i}
-        {
-            height: 3.25ch + 2*$i;
-        }   
-    }
+    height: 5ch;
+    max-height: 5ch *3;
    
     
 }
