@@ -3,7 +3,7 @@ import "./../scss/ModalWindow.scss";
 import { faXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-export default function ModalWindow({title,children, isVisible=false, onClose=()=>{}, id="" })
+export default function ModalWindow({title,children, isVisible=false, onClose=()=>{}, id="" ,onAnimationEnd=()=>{}})
 {
     const isFirst = useRef(true);
 
@@ -11,7 +11,7 @@ export default function ModalWindow({title,children, isVisible=false, onClose=()
     {
         isFirst.current = false;
     },[])
-    return <div className={`modal-window-background ${isVisible && !isFirst.current ? 'show' :'hidden'}`} id={id}>
+    return <div className={`modal-window-background ${isVisible && !isFirst.current ? 'show' :'hidden'}`} id={id} onAnimationEnd={onAnimationEnd}>
             <div className="modal-window">
                 <div className="modal-window-header">
                     <h4>{title}</h4>

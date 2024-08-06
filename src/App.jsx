@@ -24,6 +24,7 @@ import createNewChat from './api/http/create-new-chat';
 import loading from './assets/loading.gif'
 import createDateWithOffset from './utils/create-date-with-offset';
 import sortChats from './utils/sort-chats';
+import removeChat from './api/http/remove-chat';
 
 function App() {
   
@@ -70,7 +71,17 @@ function App() {
         setUserInfo({...res.data, avatar:res.data.avatar});
         
       });
-    
+      eventBus.addEventListener("remove-chat", ()=>
+      {
+        
+        setChats([...chatsRef.current.filter((chat)=>
+        {
+          return chat.id != currentChatRef.current.id;
+        })])
+        console.log(currentChatRef.current.id);
+        setCurrentChat({});
+        
+      })
       getChats().then(async (chatsRes)=>
       {
         console.log(chatsRes.data);

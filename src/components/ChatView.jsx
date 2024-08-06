@@ -13,6 +13,8 @@ import ChatMessage from './ChatMessage';
 import Message from '../abstractions/message';
 import WebSocketMessage from '../abstractions/websocket-message';
 import eventBus from '../utils/event-bus';
+import removeChat from '../api/http/remove-chat';
+
 import createDateWithOffset from '../utils/create-date-with-offset';
 import "./../scss/ChatView.scss";
 import getImage from '../api/http/get-avatar';
@@ -205,6 +207,30 @@ export default function ChatView({userName,userAvatar,userId,chatId})
     
     setIsUserInfoModalVisible(true);
   }
+  const isChatRemoved = useRef(false);
+  
+  function removeChatAndClose()
+  {
+    console.log("remove");
+    
+    setIsUserInfoModalVisible(false);
+    
+    setTimeout(()=>
+    {
+      removeChat(chatId).then((res)=>
+        {
+          console.log(res.data);
+          
+          eventBus.emit("remove-chat");
+          
+        }).catch((err)=>
+        {
+            onsole.log(err);
+        })
+    },500)
+    
+    
+  }
     
 
     return <>
@@ -226,7 +252,7 @@ export default function ChatView({userName,userAvatar,userId,chatId})
             <button className='clear send-btn' onClick={sendMessage}><FontAwesomeIcon icon={faPaperPlane} /> </button>
           
           </div>
-          <ModalWindow title={userInfo.name} isVisible={isUserInfoModalVisible} onClose={hideUserInfoModal}  id="user-info-modal">
+          <ModalWindow title={userInfo.name} isVisible={isUserInfoModalVisible} onClose={()=>{setIsUserInfoModalVisible(false)}} id="user-info-modal">
              
             <img className='avatar-img' src={getAvatar(userInfo.avatar)}/>  
             <div className='info-block'>
@@ -238,7 +264,7 @@ export default function ChatView({userName,userAvatar,userId,chatId})
               <p>@{userInfo.nickname}</p>
             </div>
 
-            <button className='remove-button'>Remove chat with this user</button>
+            <button className='remove-button' onClick={removeChatAndClose}>Remove chat with this user</button>
             
 
           </ModalWindow>

@@ -52,7 +52,7 @@ router.post("/new",authorizationMiddleware, jsonParser, async(req,res)=>
 router.get("/",authorizationMiddleware, async(req,res)=>
 {
        
-        console.log(res.locals.userId);
+       
         const [rows, _] = await pool.query("SELECT  date,id,id as currentChatId, IF(user1id = ?, user2id, user1id) AS userId, (SELECT avatar FROM users WHERE id=userId) as avatar, (SELECT name FROM users WHERE id = userId) as userName, (SELECT COUNT(*) FROM messages WHERE chatid=currentChatId AND seen=0 AND userid!=?) as unseenMessagesCount, (SELECT text FROM messages WHERE chatid=currentChatId ORDER BY date DESC LIMIT 1 ) as lastMessageText,(SELECT date FROM messages WHERE chatid=currentChatId ORDER BY date DESC LIMIT 1 ) as lastMessageDate FROM chats  WHERE (user1id = ? OR user2id = ?)",[res.locals.userId,res.locals.userId, res.locals.userId,res.locals.userId]);
         
         res.send(rows);
@@ -62,8 +62,9 @@ router.get("/",authorizationMiddleware, async(req,res)=>
 router.delete("/:id",authorizationMiddleware, async (req, res)=>
 {
    
-
-    const result = await  pool.query("DELETE FROM chats WHERE id=?", [req.params.id]);
+    console.log(req.params.id);
+    const result = await  pool.query("DELETE FROM chats WHERE id=? AND (user1id = ? OR user2id = ?)", [req.params.id, res.locals.userId, res.locals.userId]);
+    console.log(req.params.id);
     if(result[0].affectedRows == 0)
     {
         res.statusCode = 400;
