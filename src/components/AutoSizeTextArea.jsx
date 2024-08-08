@@ -10,8 +10,10 @@ export default function AutoSizeTextArea({placeholder="",value="", onInput = (e)
 
         textarea.current.style.height = "auto";
 
-        
-        textarea.current.style.height = `${textarea.current.scrollHeight}px`;
+        if(textarea.current.scrollHeight  > 0)
+        {
+            textarea.current.style.height = `${textarea.current.scrollHeight}px`;
+        }
         
     },[value]);
     function valueChanged(e)
@@ -19,9 +21,11 @@ export default function AutoSizeTextArea({placeholder="",value="", onInput = (e)
         
         textarea.current.style.height = "auto";
 
-        
-        textarea.current.style.height = `${textarea.current.scrollHeight}px`;
-        
+        if(textarea.current.scrollHeight  > 0)
+        {
+            textarea.current.style.height = `${textarea.current.scrollHeight}px`;
+
+        }
         
         onInput(e);
     }

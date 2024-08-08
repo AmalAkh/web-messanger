@@ -95,3 +95,32 @@ main
        
     }
 }
+
+@media screen and (max-width:1024px)
+{
+    .container
+    {
+        width: 30%;
+    }
+}
+@media screen and (max-width:768px)
+{
+    .container
+    {
+        width: 38%;
+    }
+}
+@media screen and (max-width:600px)
+{
+    .container
+    {
+        width:52%;
+    }
+}
+@media screen and (max-width:425px)
+{
+    .container
+    {
+        width: 90%;
+    }
+}

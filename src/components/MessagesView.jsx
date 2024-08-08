@@ -82,16 +82,21 @@ export default function MessageView({messages=[],userId, allMessagesLoaded=false
         /** scroll to the end in case we send new message  */
         if(scrollToEnd.current)
         {
-
+            console.log("scorlled");
             setTimeout(()=>
             {
                 messageView.current.scroll({left:0, top:messageView.current.scrollHeight, behavior:"smooth"});
                 scrollToEnd.current = false;
             },10);
         }
-       
+        if(prevMessagesCount.current == 0)
+        {
+            console.log("scrolllll");
+            messageView.current.scroll({left:0, top:messageView.current.scrollHeight, behavior:"instant"});
+
+        }
         prevMessagesCount.current = messages.length;
-        console.log(prevMessagesCount.current)
+        
         
         
     }, [messages])
@@ -158,14 +163,14 @@ export default function MessageView({messages=[],userId, allMessagesLoaded=false
     const scrollToEnd = useRef(false);
     useEffect(()=>
     {
-    
         eventBus.addEventListener("new-message",(message)=>
         {
             if(message.isLocal || (!message.isLocal && messageView.current.scrollTop+messageView.current.clientHeight >= messageView.current.scrollHeight -50 ))
             {
                // console.log(messageView.current.scrollHeight);
                 scrollToEnd.current = true;
-                console.log("needs to scroll");
+                
+                
             }
             
         })

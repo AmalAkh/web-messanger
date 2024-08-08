@@ -1,6 +1,6 @@
 const express = require("express");
 const cors = require("cors");
-
+const path = require("path");
 const users = require("./routers/users");
 const chats = require("./routers/chats");
 const websocket = require("./routers/websocket");
@@ -25,17 +25,18 @@ const app = express();
 
 let corsOptions =  
 {
-    origin:"http://localhost:5173",
+    origin:"*",
     optionsSuccessStatus: 200
 }
 
-app.get("/", (req, res)=>
-{
-    res.send("test"); 
-});
+
+
 app.use("/users", cors(corsOptions) , users);
 app.use("/chats", cors(corsOptions) , chats);
 app.use("/websocket", cors(corsOptions) , websocket);
+app.use(express.static("../dist/"))
+app.get("/*",cors(corsOptions), (req,res)=>{res.sendFile(path.resolve("../dist/index.html"))})
+
 
 
 

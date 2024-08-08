@@ -19,7 +19,10 @@
     {
         opacity: 0;
     }
-    
+    .back-button
+    {
+        display: none;
+    }
     .top-bar
     {
         
@@ -93,4 +96,21 @@
         font-size: 0.6rem;
     }
     
+}
+
+@media screen and (max-width:768px)
+{
+    .chat
+    {
+        .back-button
+        {
+            display: block;
+            font-size: 1.05rem;
+        }
+        display: flex;
+        &.hidden
+        {
+            display: none;
+        }
+    }
 }

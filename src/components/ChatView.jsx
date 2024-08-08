@@ -1,5 +1,5 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperPlane, faPlus } from '@fortawesome/free-solid-svg-icons'
+import { faPaperPlane, faPlus, faChevronLeft } from '@fortawesome/free-solid-svg-icons'
 import { useNavigate } from "react-router-dom";
 import ModalWindow from './ModalWindow';
 
@@ -25,7 +25,7 @@ import getMessages from '../api/http/get-messages';
 
 
 
-export default function ChatView({userName,userAvatar,userId,chatId})
+export default function ChatView({userName,userAvatar,userId,chatId, onBackButtonClicked=()=>{}})
 {
 
   const chatIdRef = useRef(chatId);
@@ -168,7 +168,7 @@ export default function ChatView({userName,userAvatar,userId,chatId})
           
         }).catch((err)=>
         {
-          navigate("/login");
+          //navigate("/login");
         })
       axios.get(`http://localhost:8000/users/${userId}/status`,{headers:{'Authorization':localStorage.getItem("jwt")}}).then((res)=>
       {
@@ -211,7 +211,7 @@ export default function ChatView({userName,userAvatar,userId,chatId})
   
   function removeChatAndClose()
   {
-    console.log("remove");
+    
     
     setIsUserInfoModalVisible(false);
     
@@ -231,13 +231,20 @@ export default function ChatView({userName,userAvatar,userId,chatId})
     
     
   }
-    
+  function back(e)
+  {
+    e.stopPropagation();
+    onBackButtonClicked();
+
+  }
 
     return <>
     <div className={`chat ${!chatId ? 'hidden': ''}`}>
           <div className='top-bar' onClick={showUserInfoModal} >
+            <button className='back-button clear' onClick={back}><FontAwesomeIcon icon={faChevronLeft} /></button>
             <img src={getImage(userAvatar)} className='avatar-img'/>
             <div>
+              
               <p>{userName}</p>
               <p className={`user-status ${currentUserStatus == "online" && 'online'}`}>{currentUserStatus}</p>
               

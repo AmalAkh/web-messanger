@@ -59,7 +59,7 @@ function App() {
   
 
   const navigate = useNavigate();
-
+  console.log(localStorage.getItem("jwt"))
 
   useEffect(()=>
   {
@@ -78,13 +78,13 @@ function App() {
         {
           return chat.id != currentChatRef.current.id;
         })])
-        console.log(currentChatRef.current.id);
+        
         setCurrentChat({});
         
       })
       getChats().then(async (chatsRes)=>
       {
-        console.log(chatsRes.data);
+        
         setChats([...chatsRes.data.map((chat)=>
           {
             return {...chat, lastMessageDate:createDateWithOffset(chat.lastMessageDate), date:createDateWithOffset(chat.date)}
@@ -157,7 +157,7 @@ function App() {
           
       }).catch((err)=>
       {
-       
+        console.log(err);
         navigate("/login");
       })
 
@@ -309,13 +309,16 @@ function App() {
     setIsNewChatModalVisible(false);
   }
   
-  
+  function backButtonClicked()
+  {
+    setCurrentChat({});
+  }
   
 
   return (
     <>
       <main>
-        <div className='chats-list'>
+        <div className={`chats-list ${!currentChat.id && 'visible'}`}>
             <div className="my-profile">
               <img className='avatar-img' src={getAvatar(userInfo.avatar)}/>
               <div className='add-info'>
@@ -348,7 +351,7 @@ function App() {
             
             
         </div>
-        <ChatView userName={currentChat.userName} userAvatar={currentChat.avatar} chatId={currentChat.id} userId={currentChat.userId}></ChatView>
+        <ChatView onBackButtonClicked={backButtonClicked} userName={currentChat.userName} userAvatar={currentChat.avatar} chatId={currentChat.id} userId={currentChat.userId}></ChatView>
         <ModalWindow title="Edit your data" isVisible={isUserEditInfoModalVisible} onClose={hideUserEditInfoModal}  id="edit-user-info-modal">
 
             
