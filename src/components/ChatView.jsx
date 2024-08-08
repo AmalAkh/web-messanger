@@ -59,7 +59,7 @@ export default function ChatView({userName,userAvatar,userId,chatId, onBackButto
     
     eventBus.addEventListener("new-message", (message)=>
     {
-      
+      console.log(message)
       addNewMessage(message);
     })
     eventBus.addEventListener("see-local-message", (message)=>

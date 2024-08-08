@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "./scss/Login.scss";
 import axios from "axios";
 import host from "./api/http/host";
+import loginIntoApp from "./api/http/login-into-app";
 
 export default function Login()
 {   
@@ -31,8 +32,8 @@ export default function Login()
 
    function auth()
    {
-        console.log(host);
-        axios.post("/users/auth", {login:login, password:password}).then((response)=>
+        
+        loginIntoApp(login, password).then((response)=>
         {
             localStorage.setItem("jwt", response.data);
             console.log(response.data);

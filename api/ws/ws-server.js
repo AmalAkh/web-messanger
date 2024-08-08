@@ -71,7 +71,7 @@ async function createNewMessage(messangerRequest, senderId)
     let messageId  = v4();
     const date = new Date();
     
-    let messageDate = `${date.getUTCFullYear()}.${date.getUTCMonth()+1}.${date.getUTCDate()} ${date.getUTCHours()}:${date.getUTCMinutes()}:${date.getUTCSeconds()}`; 
+    let messageDate = `${date.getUTCFullYear()}-${date.getUTCMonth()+1 >= 10 ? date.getUTCMonth()+1: "0"+(date.getUTCMonth()+1)}-${date.getUTCDate() >=10 ? date.getUTCDate():"0"+date.getUTCDate()}T${date.getUTCHours()}:${date.getUTCMinutes() >=10 ? date.getUTCMinutes() : "0"+date.getUTCMinutes()}:${date.getUTCSeconds() >= 10 ? date.getUTCSeconds() : "0"+date.getUTCSeconds()}`; 
     await pool.execute("INSERT INTO messages VALUES(?, ?, ?, ?, ?, DEFAULT )", [messangerRequest.data.text,messageDate, messangerRequest.data.chatId, senderId, messageId ])
     
 
