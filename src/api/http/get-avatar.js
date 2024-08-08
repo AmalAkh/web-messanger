@@ -13,5 +13,5 @@ export default function getAvatar(image)
     {
         return image
     }
-    return `${host}users/avatars/${image}`;
+    return `${host}/users/avatars/${image}`;
 }
