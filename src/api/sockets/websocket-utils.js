@@ -1,3 +1,4 @@
+import host from '../http/host';
 function getSetupConnectionFunction()
 {
     let connectionAttempts = 0;
@@ -8,7 +9,7 @@ function getSetupConnectionFunction()
         console.log(connectionAttempts);
         return new Promise(async(resolve,reject)=>
         {
-            let websocket = new WebSocket(`ws://localhost:8000?ticket=${ticket}`);
+            let websocket = new WebSocket(`ws://${host.replace("http://", "")}?ticket=${ticket}`);
             
             websocket.onerror = async (err)=>
             {

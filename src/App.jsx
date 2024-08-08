@@ -2,13 +2,13 @@ import { useEffect, useState, useRef } from 'react'
 import { useNavigate } from "react-router-dom";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faPaperPlane, faPlus} from '@fortawesome/free-solid-svg-icons'
+import {  faPlus} from '@fortawesome/free-solid-svg-icons'
 import axios from 'axios';
 
 import "./scss/App.scss";
 import ModalWindow from './components/ModalWindow';
 import Chat from './abstractions/chat';
-import AutoSizeTextArea from './components/AutoSizeTextArea';
+
 import ChatView from './components/ChatView';
 
 import {getSetupConnectionFunction} from './api/sockets/websocket-utils';
@@ -21,10 +21,11 @@ import getAvatar from './api/http/get-avatar';
 import getUserInfo from './api/http/get-user-info';
 import createNewChat from './api/http/create-new-chat';
 
-import loading from './assets/loading.gif'
+
 import createDateWithOffset from './utils/create-date-with-offset';
 import sortChats from './utils/sort-chats';
-import removeChat from './api/http/remove-chat';
+import updateUserInfo from './api/http/update-user-info';
+
 
 function App() {
   
@@ -35,7 +36,7 @@ function App() {
     _setCurrentChat(chat);
     currentChatRef.current = chat;
   }
-
+  
   const [chats, _setChats] = useState([]);
   const chatsRef = useRef([]);
   function setChats(newChats)
@@ -253,17 +254,17 @@ function App() {
       formData.append("avatar", null);
     }
     
-    
-    axios.put("http://localhost:8000/users/info/update", formData, {headers:{'Authorization':localStorage.getItem("jwt")}}).then((res)=>
-    {
-      if(res.data)
+    updateUserInfo(formData).then((res)=>
       {
-        setUserInfo({...userInfo, avatar:res.data})
-      }
-      
-      setIsUserEditInfoModalVisible(false);
-      avatarFileRef.current = null;
-    })
+        if(res.data)
+        {
+          setUserInfo({...userInfo, avatar:res.data})
+        }
+        
+        setIsUserEditInfoModalVisible(false);
+        avatarFileRef.current = null;
+      })
+    
   }
   const avatarFileRef = useRef(null);
   async function changeAvatar(e)

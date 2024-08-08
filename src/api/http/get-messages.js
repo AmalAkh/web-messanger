@@ -1,4 +1,6 @@
 import axios from "axios";
+
+
 /**
  * 
  * @param {String} chatId  chat id
@@ -7,5 +9,5 @@ import axios from "axios";
  */
 export default function getMessages(chatId, offset=0)
 {
-    return axios.get(`http://localhost:8000/chats/${chatId}/messages/${offset}`,{headers:{'Authorization':localStorage.getItem("jwt")}});
+    return axios.get(`/chats/${chatId}/messages/${offset}`,{headers:{'Authorization':localStorage.getItem("jwt")}});
 }

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./scss/Login.scss";
 import axios from "axios";
+import host from "./api/http/host";
 
 export default function Login()
 {   
@@ -30,17 +31,17 @@ export default function Login()
 
    function auth()
    {
-        console.log(login);
-        axios.post("http://localhost:8000/users/auth", {login:login, password:password}).then((response)=>
+        console.log(host);
+        axios.post("/users/auth", {login:login, password:password}).then((response)=>
         {
             localStorage.setItem("jwt", response.data);
             console.log(response.data);
             navigate("/");
         }).catch((err)=>
-            {
-                console.log(err.response.data);
-                setErrorMessage(err.response.data.clientMessage);
-            })
+        {
+            console.log(err);
+            setErrorMessage(err.response.data.clientMessage);
+        })
        
    }
 

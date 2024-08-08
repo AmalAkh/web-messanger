@@ -1,4 +1,7 @@
 import avatarPlaceholder from "./../../assets/user.png";
+import host from "./host";
+
+
 export default function getAvatar(image)
 {
    
@@ -10,5 +13,5 @@ export default function getAvatar(image)
     {
         return image
     }
-    return `http://localhost:8000/users/avatars/${image}`;
+    return `${host}users/avatars/${image}`;
 }

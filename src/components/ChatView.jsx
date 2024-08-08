@@ -21,6 +21,7 @@ import getImage from '../api/http/get-avatar';
 import getUserInfo from '../api/http/get-user-info';
 import getAvatar from '../api/http/get-avatar';
 import getMessages from '../api/http/get-messages';
+import getUserStatus from '../api/http/get-user-status';
 
 
 
@@ -170,7 +171,7 @@ export default function ChatView({userName,userAvatar,userId,chatId, onBackButto
         {
           //navigate("/login");
         })
-      axios.get(`http://localhost:8000/users/${userId}/status`,{headers:{'Authorization':localStorage.getItem("jwt")}}).then((res)=>
+      getUserStatus(userId).then((res)=>
       {
         setUserStatus(res.data);
       });
