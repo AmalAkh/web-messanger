@@ -4,9 +4,9 @@ function getSetupConnectionFunction()
     let connectionAttempts = 0;
     return function setupConnection(ticket)
     {
-        console.log(ticket)
+       
         connectionAttempts+=1;
-        console.log(connectionAttempts);
+        
         return new Promise(async(resolve,reject)=>
         {
             let websocket = new WebSocket(`ws://${host.replace("http://", "")}?ticket=${ticket}`);

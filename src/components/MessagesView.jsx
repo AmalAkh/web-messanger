@@ -36,7 +36,7 @@ export default function MessageView({messages=[],userId, allMessagesLoaded=false
         if(isLoadingIndicatorVisible)
         {
             setIsLoadingIndicatorVisible(false);
-            console.log('scrolled');
+            
             
             let elementIndex = messages.length - prevMessagesCount.current-1;
             if(elementIndex < 0)
@@ -82,7 +82,6 @@ export default function MessageView({messages=[],userId, allMessagesLoaded=false
         /** scroll to the end in case we send new message  */
         if(scrollToEnd.current)
         {
-            console.log("scorlled");
             setTimeout(()=>
             {
                 messageView.current.scroll({left:0, top:messageView.current.scrollHeight, behavior:"smooth"});
@@ -91,8 +90,11 @@ export default function MessageView({messages=[],userId, allMessagesLoaded=false
         }
         if(prevMessagesCount.current == 0)
         {
-            console.log("scrolllll");
-            messageView.current.scroll({left:0, top:messageView.current.scrollHeight, behavior:"instant"});
+            console.log("scroll");
+            setTimeout(()=>
+            {
+                messageView.current.scroll({left:0, top:messageView.current.scrollHeight, behavior:"instant"});
+            }, 10);
 
         }
         prevMessagesCount.current = messages.length;
@@ -167,7 +169,7 @@ export default function MessageView({messages=[],userId, allMessagesLoaded=false
         {
             if(message.isLocal || (!message.isLocal && messageView.current.scrollTop+messageView.current.clientHeight >= messageView.current.scrollHeight -50 ))
             {
-               // console.log(messageView.current.scrollHeight);
+               
                 scrollToEnd.current = true;
                 
                 

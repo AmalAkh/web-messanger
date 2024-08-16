@@ -36,11 +36,11 @@ export default function Login()
         loginIntoApp(login, password).then((response)=>
         {
             localStorage.setItem("jwt", response.data);
-            console.log(response.data);
+          
             navigate("/");
         }).catch((err)=>
         {
-            console.log(err);
+            
             setErrorMessage(err.response.data.clientMessage);
         })
        

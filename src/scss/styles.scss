@@ -89,3 +89,16 @@ button
 {
     box-shadow:$x $y $blur $spread #616161;
 }
+
+@media screen and (max-width:768px) 
+{
+    button
+    {
+        font-size: 0.95rem;
+    }
+    input
+    {
+        font-size: 0.95rem;
+
+    }
+}

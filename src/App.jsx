@@ -60,7 +60,7 @@ function App() {
   
 
   const navigate = useNavigate();
-  console.log(localStorage.getItem("jwt"))
+
 
   useEffect(()=>
   {
@@ -158,7 +158,7 @@ function App() {
           
       }).catch((err)=>
       {
-        console.log(err);
+      
         navigate("/login");
       })
 
@@ -203,7 +203,7 @@ function App() {
         
           }).catch((err)=>
           {
-            console.log(err);
+          
             navigate("/login");
           })
     })
@@ -299,7 +299,7 @@ function App() {
         setIsNewChatModalVisible(false);
       }).catch((err)=>
       {
-          console.log(err);
+         
           setNewChatErrorMessage(err.response.data.clientMessage);
       });
   }
