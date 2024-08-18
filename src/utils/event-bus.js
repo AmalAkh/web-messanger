@@ -4,7 +4,10 @@ class EventBus
     {
         this.events = new Map();
     }
-
+    clear()
+    {
+        this.events.clear();
+    }
     emit(event, ...args)
     {
         this.events.get(event) && this.events.get(event).forEach((listener)=>

@@ -10,10 +10,10 @@ function getSetupConnectionFunction()
         return new Promise(async(resolve,reject)=>
         {
             let websocket = new WebSocket(`ws://${host.replace("http://", "")}?ticket=${ticket}`);
-            
+             
             websocket.onerror = async (err)=>
             {
-                setTimeout(async ()=>
+                /*setTimeout(async ()=>
                 {
                     if(connectionAttempts > 4)
                     {
@@ -22,8 +22,8 @@ function getSetupConnectionFunction()
                     }else
                     {
                         resolve(await setupConnection(ticket));
-                    }
-                }, 3000);
+                    }  
+                }, 3000);*/
                 
                 
             };

@@ -133,6 +133,7 @@ export default function ChatView({userName,userAvatar,userId,chatId, onBackButto
     if(chatIdRef.current == newMessage.chatId)
     {
       messagesOffsetRef.current++;
+      console.log("added");
       setMessages([...messagesRef.current, {...newMessage,date:createDateWithOffset(newMessage.date) }])
     }
     

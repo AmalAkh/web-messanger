@@ -51,7 +51,7 @@ function App() {
   const [isUserEditInfoModalVisible, setIsUserEditInfoModalVisible] = useState(false);
 
   
-
+  
   
   
   const webSocketRef = useRef(null);
@@ -63,9 +63,9 @@ function App() {
 
 
   useEffect(()=>
-  {
-    
-    
+  { 
+      
+      console.log("setup");
       getUserInfo().then((res)=>
       {
         
@@ -114,47 +114,13 @@ function App() {
         })
         eventBus.addEventListener("send-message", (message)=>
         {
-
+          
           webSocketRef.current.send(JSON.stringify(new WebSocketMessage("new_msg", message)));
           
         })
         
 
-        webSocketRef.current.addEventListener("message",(websocketMessage)=>
-        {
-            
-            const message = JSON.parse(websocketMessage.data);
-            
-            if(message.type == "new_msg" )
-            {
-              
-              eventBus.emit("new-message", message.data);
-              
-              setChats([...chatsRef.current.map((chat)=>
-              {
-                
-                
-                if(chat.id == message.data.chatId)
-                {
-                  if(!message.data.isLocal)
-                  {
-                    
-                    return {...chat, unseenMessagesCount:chat.unseenMessagesCount+1,lastMessageText:message.data.text, lastMessageDate:new Date()}
-                  }
-                  return {...chat, lastMessageText:message.data.text,lastMessageDate:new Date()}
-                }
-                return chat;
-              })])
-            }else if(message.type == "see_msg")
-            {
-              /**In case somebody has seen our message */
-              eventBus.emit("see-local-message", message.data);
-            }else if(message.type == "status-change")
-            {
-              
-              eventBus.emit("status-change", message.data.userId, message.data.status);
-            }
-          })
+        
           
       }).catch((err)=>
       {
@@ -173,7 +139,44 @@ function App() {
   }, []);
 
 
-  
+  function setupWebSocketEventHandlers()
+  {
+    webSocketRef.current.addEventListener("message",(websocketMessage)=>
+      {
+          
+          const message = JSON.parse(websocketMessage.data);
+          
+          if(message.type == "new_msg" )
+          {
+            
+            eventBus.emit("new-message", message.data);
+            
+            setChats([...chatsRef.current.map((chat)=>
+            {
+              
+              
+              if(chat.id == message.data.chatId)
+              {
+                if(!message.data.isLocal)
+                {
+                  
+                  return {...chat, unseenMessagesCount:chat.unseenMessagesCount+1,lastMessageText:message.data.text, lastMessageDate:new Date()}
+                }
+                return {...chat, lastMessageText:message.data.text,lastMessageDate:new Date()}
+              }
+              return chat;
+            })])
+          }else if(message.type == "see_msg")
+          {
+            /**In case somebody has seen our message */
+            eventBus.emit("see-local-message", message.data);
+          }else if(message.type == "status-change")
+          {
+            
+            eventBus.emit("status-change", message.data.userId, message.data.status);
+          }
+        })
+  }
   function setupWebSocketConnection()
   {
     return new Promise((resolve, reject)=>
@@ -183,8 +186,8 @@ function App() {
             
           const setupConnection = getSetupConnectionFunction();
           let websocket = await setupConnection(ticketRes.data);
-           
-          websocket.onclose = async ()=>
+          
+          websocket.onclose = async (e)=>
           {
             if(e.code != 1000 && e.code != 1001)
             {
@@ -192,7 +195,9 @@ function App() {
                         
             }
           };
+          
           webSocketRef.current = websocket;
+          setupWebSocketEventHandlers();
           resolve(websocket);
           
           
@@ -203,8 +208,11 @@ function App() {
         
           }).catch((err)=>
           {
-          
-            navigate("/login");
+            if(err.code == 401)
+            {
+              navigate("/login");
+            }
+            
           })
     })
     
