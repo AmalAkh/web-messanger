@@ -13,12 +13,15 @@ main
     padding: 10px;
     &.show
     {
-        
-        display: block;
+        animation: show-anim;
+        animation-fill-mode: forwards;
+        animation-duration: 1s;
+
     }
     &.hidden
     {
         display: none;
+
     }
     input
     {
@@ -36,20 +39,26 @@ main
         margin-top:20px;
     }
 }
-/*.register-container
+.successful-register-container
 {
-    display: none;
+    button
+    {
+        width:100%;
+    }
 }
-*/
+.buttons-block
+{
+    display: flex;
+    button
+    {
+        flex:6;
+    }
+}
 .code-container
 {
     display: none;
 }
-#login-button
-{
-    background-color: $link-blue;
-    color:white;
-}
+
 .error-msg
 {
     padding: 6px;

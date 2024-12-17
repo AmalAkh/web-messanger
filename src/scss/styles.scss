@@ -44,7 +44,7 @@ small
 
 
 
-input[type='text'], input[type='password'], textarea
+input[type='text'], input[type='password'],input[type='email'], textarea
 {
     background-color: $light-gray;
     border:0px;
@@ -83,6 +83,11 @@ button
     {
         color:$red;
         border:2px solid $red;
+    }
+    &.blue-button
+    {
+        background-color: $link-blue;
+        color:white;
     }
 }
 @mixin shadow($x:0px, $y:2px, $blur:8px, $spread:-6px)
