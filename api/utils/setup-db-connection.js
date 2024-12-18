@@ -5,8 +5,8 @@ function setupDBConnection()
     return mysql.createPool(
         { 
             user:"root",
-            host:"localhost",
-            password:"amal2004",
+            host:"db",
+            password:"643a01ce5daa7c6e3f",
             database:"web-chat-app-db",
             maxIdle:50,
             

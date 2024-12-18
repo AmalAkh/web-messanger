@@ -116,10 +116,10 @@ router.post("/auth", jsonParser,  async (req,res)=>
     }
     if(rows[0].confirmed != 1)
     {
-        res.appendHeader("Content-Type", "text/json");
+        /*res.appendHeader("Content-Type", "text/json");
         res.statusCode = 401;
         res.send(new ApiError("user_not_confirmed", "User account is not confirmed", "User account is not confirmed"));
-        return;
+        return;*/
     }
     
     if(!(await bcrypt.compare(req.body.password, rows[0].password)))

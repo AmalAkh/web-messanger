@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    ports:
+      - "8000:8000"
+      - "8080:8080"
+
+
+  db:
+    build: db/
+    ports:
+      - "10027:3306"
+    environment:
+        MYSQL_ROOT_PASSWORD: "643a01ce5daa7c6e3f"
+

@@ -63,8 +63,9 @@ export default function Login()
    }
    function register()
    {
-        if(login == "" || password == "" || email == "" || name == "")
+        if(password == "" || email == "" || name == "" || nickname == "")
         {
+            debugger;
             setErrorMessage("Fill all fields");
             return;
         }
@@ -82,10 +83,12 @@ export default function Login()
             setPassword2("");
             setRegisterIsVisible(false);
             setSuccessfulRegisterIsVisible(true);
+            setErrorMessage("");
 
 
         }).catch(err=>
         {
+            console.log(err);
             setErrorMessage(err.response.data.clientMessage);
         });
    }

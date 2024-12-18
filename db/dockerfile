@@ -1,0 +1,5 @@
+FROM mysql:lts
+
+COPY /setup.sql /docker-entrypoint-initdb.d/
+
+CMD [ "mysqld" ]
