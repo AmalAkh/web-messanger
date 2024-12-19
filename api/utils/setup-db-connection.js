@@ -2,25 +2,17 @@ const mysql = require("mysql2/promise");
 
 function setupDBConnection()
 {
-    /*return mysql.createPool(
+    console.log(process.env.DB_HOST);
+    return mysql.createPool(
         { 
             user:"root",
-            host:"db",
+            host:process.env.DB_HOST ? process.env.DB_HOST : "localhost",
             password:"643a01ce5daa7c6e3f",
             database:"web-chat-app-db",
             maxIdle:50
             
            
-        });*/
-    return mysql.createPool(
-        { 
-            user:"root",
-            host:"localhost",
-            password:"amal2004",
-            database:"web-chat-app-db",
-            maxIdle:50
-            
-            
         });
+    
 }
 module.exports = setupDBConnection();

@@ -53,7 +53,7 @@ DROP TABLE IF EXISTS `messages`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `messages` (
   `text` text NOT NULL,
-  `date` timestamp NOT NULL,
+  `date` DATETIME NOT NULL DEFAULT NOW(),
   `chatid` varchar(36) NOT NULL,
   `userid` varchar(36) NOT NULL,
   `id` varchar(36) NOT NULL,
