@@ -19,6 +19,8 @@
 -- Table structure for table `chats`
 --
 
+SET GLOBAL time_zone = '+00:00';
+
 CREATE DATABASE `web-chat-app-db`;
 USE `web-chat-app-db`;
 
