@@ -266,7 +266,7 @@ export default function ChatView({userName,userAvatar,userId,chatId, onBackButto
             <img className='avatar-img' src={getAvatar(userInfo.avatar)}/>  
             <div className='info-block'>
               <small>Name</small>
-              <p>@{userInfo.name}</p>
+              <p>{userInfo.name}</p>
             </div>
             <div className='info-block'>
               <small>Nickname</small>

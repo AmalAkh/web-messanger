@@ -2,7 +2,7 @@ const mysql = require("mysql2/promise");
 
 function setupDBConnection()
 {
-    console.log(process.env.DB_HOST);
+  
     return mysql.createPool(
         { 
             user:"root",

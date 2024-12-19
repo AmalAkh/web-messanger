@@ -66,9 +66,14 @@ button
     font-family: "Physis-Medium";
     box-sizing: border-box;
     padding: 0.7rem;
+    transition: all 0.25s;
 
     border:0px;
     cursor: pointer;
+    &:hover
+    {
+        background-color: $medium-gray;
+    }
     &.clear
     {
         background-color: transparent;
@@ -88,6 +93,11 @@ button
     {
         background-color: $link-blue;
         color:white;
+        
+        &:hover
+        {
+            background-color: $dark-link-blue;
+        }
     }
 }
 @mixin shadow($x:0px, $y:2px, $blur:8px, $spread:-6px)
