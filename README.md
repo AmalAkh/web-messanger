@@ -1,8 +1,39 @@
-# React + Vite
+# Web Chat Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A simple and efficient real-time web chat application built using **NodeJS**, **ReactJS**, **Vite**, and **WebSockets**. This project demonstrates how to create a responsive and interactive chat experience with real-time communication.
 
-Currently, two official plugins are available:
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+## Features
+
+- **Real-time Messaging:** Instant communication
+- **Responsive UI:** Designed to work seamlessly on both desktop and mobile devices.
+
+- **Scalable Backend:** NodeJS server ensures robust performance and easy scalability.
+- **User-Friendly Interface:** Built with ReactJS for a dynamic and intuitive frontend.
+
+
+
+## Technologies Used
+
+- **Frontend:**
+  - ReactJS
+  - Vite
+
+- **Backend:**
+  - NodeJS
+
+- **Real-time Communication:**
+  - WebSockets
+
+## Run using docker
+```
+git clone https://github.com/AmalAkh/web-messanger
+
+cd web-messanger
+
+docker compose up
+``` 
+
+
+
